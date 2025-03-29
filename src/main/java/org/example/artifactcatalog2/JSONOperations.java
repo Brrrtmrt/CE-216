@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -24,6 +23,7 @@ public class JSONOperations {
     //Data.json will be created in program main?, below is only the string of the path it does not actually create the file.
     private static Path databasePath = Paths.get(System.getProperty("user.dir"), "Data.json");
 
+    //This will not create duplicates.
     public static boolean importJSON(Path file) {
         try {
             String json = Files.readString(file);
@@ -33,7 +33,7 @@ public class JSONOperations {
                 return false;
             }
 
-            ArrayList<Artifact> existingList = new ArrayList<>();
+            ArrayList<Artifact> existingList;
             if (Files.exists(databasePath)) {
                 String currJSON = Files.readString(databasePath);
                 existingList = deserializeList(currJSON);
@@ -64,18 +64,25 @@ public class JSONOperations {
     }
 
     //Main JSON File for programs usage
+    //If you throw in same objects in list it will create duplicates.For now...
     public static boolean writeJSON(Path path, ArrayList<Artifact> list) {
-        File out;
-        if (Files.exists(path)) {
-            out = path.toFile();
-        } else {
-            return false;
-        }
-        try (FileWriter fw = new FileWriter(out)) {
-            String json = serialize(list);
-            fw.write(json);
-            fw.close();
-            return true;
+        try {
+            ArrayList<Artifact> existingList = new ArrayList<>();
+            if (Files.exists(path)) {
+                String currJSON = Files.readString(path);
+                existingList = deserializeList(currJSON);
+                if (existingList == null) {
+                    existingList = new ArrayList<>();
+                }
+            }
+
+            existingList.addAll(list);
+            String json = serialize(existingList);
+
+            try (FileWriter fw = new FileWriter(path.toFile())) {
+                fw.write(json);
+                return true;
+            }
         } catch (IOException e) {
             return false;
         }
@@ -87,8 +94,9 @@ public class JSONOperations {
         Artifact art2 = new Artifact("test", "test", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
         Artifact art3 = new Artifact("asddsa", "adsdas", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
         ArrayList<Artifact> list = new ArrayList<>(Arrays.asList(art, art2, art3));
-        Path pt = Paths.get("Test.json");
-        importJSON(pt);
+        // writeJSON(databasePath, list);
+        // Path pt = Paths.get("Test.json");
+        // importJSON(pt);
     }
 
     @Deprecated

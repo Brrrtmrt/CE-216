@@ -1,8 +1,12 @@
 package org.example.artifactcatalog2;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -20,18 +24,15 @@ public class ArtifactTypeAdapter extends TypeAdapter<Artifact> {
         out.name("name").value(artifact.getName());
         out.name("category").value(artifact.getCategory());
         out.name("discoveryLocation").value(artifact.getDiscoveryLocation());
-        out.name("composition").value(artifact.getComposition().toString());
+        out.name("composition").jsonValue(new Gson().toJson(artifact.getComposition()));
         out.name("civilization").value(artifact.getCivilization());
         out.name("discoveryDate").value(artifact.getDiscoveryDate().toString());
         out.name("currentPlace").value(artifact.getCurrentPlace());
         out.name("dimension");
         dimensionTypeAdapter.write(out, artifact.getDimension());
         out.name("weight").value(artifact.getWeight());
-        out.name("tags").value(artifact.getTags().toString());
-
+        out.name("tags").jsonValue(new Gson().toJson(artifact.getTags()));
         out.endObject();
-
-
     }
 
     @Override
@@ -53,7 +54,9 @@ public class ArtifactTypeAdapter extends TypeAdapter<Artifact> {
                     artifact.setDiscoveryLocation(in.nextString());
                     break;
                 case "composition":
-                    artifact.setComposition(new ArrayList<>(List.of(in.nextString().split(","))));
+                    ArrayList<String> compositionList = new Gson().fromJson(in, new TypeToken<List<String>>() {
+                    }.getType());
+                    artifact.setComposition(compositionList);
                     break;
                 case "civilization":
                     artifact.setCivilization(in.nextString());
@@ -71,7 +74,9 @@ public class ArtifactTypeAdapter extends TypeAdapter<Artifact> {
                     artifact.setWeight(in.nextLong());
                     break;
                 case "tags":
-                    artifact.setTags(new ArrayList<>(List.of(in.nextString().split(","))));
+                    ArrayList<String> tagsList = new Gson().fromJson(in, new TypeToken<List<String>>() {
+                    }.getType());
+                    artifact.setTags(tagsList);
                     break;
             }
         }
