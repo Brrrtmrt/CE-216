@@ -1,5 +1,7 @@
 package org.example.artifactcatalog2;
 
+import java.util.Objects;
+
 public class Dimension {
     private long width;
     private long length;
@@ -37,4 +39,5 @@ public class Dimension {
     public void setHeight(long height) {
         this.height = height;
     }
+
 }

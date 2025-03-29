@@ -2,7 +2,7 @@ package org.example.artifactcatalog2;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-
+import java.util.Objects;
 
 
 public class Artifact {
@@ -20,8 +20,9 @@ public class Artifact {
         this.weight = weight;
         this.tags = tags;
     }
-    public Artifact() {}
 
+    public Artifact() {
+    }
 
 
     private String ID;
@@ -122,5 +123,17 @@ public class Artifact {
 
     public void setTags(ArrayList<String> tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Artifact artifact = (Artifact) o;
+        return Objects.equals(ID, artifact.ID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID);
     }
 }
