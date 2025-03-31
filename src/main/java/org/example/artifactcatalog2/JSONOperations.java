@@ -48,9 +48,13 @@ public class JSONOperations {
     }
 
     //Need file selector JavaFX
-    public static boolean exportJSON(Path out) {
-
-        return false;
+    public static boolean exportJSON(Path out, ArrayList<Artifact> selectedArtifacts) {
+        /*
+        SELECT ARTIFACTS FROM GUI
+        SELECT OUT FILE FROM JAVAFX FILE SELECTOR
+        CALL THIS WITH THOSE
+         */
+        return noCheckWriteJSON(out, selectedArtifacts);
     }
 
 
@@ -63,6 +67,15 @@ public class JSONOperations {
         }
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             gson.toJson(new ArrayList<>(artifactSet), writer);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean noCheckWriteJSON(Path path, ArrayList<Artifact> list) {
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+            gson.toJson(list, writer);
             return true;
         } catch (IOException e) {
             return false;
