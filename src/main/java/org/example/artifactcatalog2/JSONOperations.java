@@ -6,9 +6,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +36,11 @@ public class JSONOperations {
 
             ArrayList<Artifact> existingList = readExistingList();
             Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
-            artifactSet.addAll(newList);
+            //check if there is a difference if not do not write.
+            boolean flag = artifactSet.addAll(newList);
+            if (!flag) {
+                return false;
+            }
             return writeJSON(databasePath, new ArrayList<>(artifactSet));
         } catch (IOException | JsonParseException e) {
             return false;
@@ -55,8 +57,11 @@ public class JSONOperations {
     public static boolean writeJSON(Path path, ArrayList<Artifact> list) {
         ArrayList<Artifact> existingList = readExistingList();
         Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
-        artifactSet.addAll(list);
-        try (FileWriter writer = new FileWriter(path.toFile())) {
+        boolean flag = artifactSet.addAll(list);
+        if (!flag) {
+            return false;
+        }
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             gson.toJson(new ArrayList<>(artifactSet), writer);
             return true;
         } catch (IOException e) {
@@ -93,9 +98,9 @@ public class JSONOperations {
 
         ArrayList<Artifact> list = new ArrayList<>(Arrays.asList(art, art2, art3, art4, art5, art6));
 
-        //Path pt = Paths.get("Test.json");
-        //importJSON(pt);
-        //writeJSON(databasePath, list);
+        Path pt = Paths.get("Test.json");
+        importJSON(pt);
+        // writeJSON(databasePath, list);
     }
 
     @Deprecated
