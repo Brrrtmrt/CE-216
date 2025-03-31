@@ -28,6 +28,6 @@ public class ControllerMain implements Initializable {
         filter.setValue("Filter");
         HBox firsLine = new HBox();
         firsLine.setAlignment(Pos.CENTER);
-        
+
     }
 }
