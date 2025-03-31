@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.artifactcatalog2.ControllerMain">
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.artifactcatalog2.ControllerMain">
    <children>
-      <ChoiceBox id="myChoiceBox" layoutX="436.0" layoutY="14.0" prefWidth="150.0" />
+      <VBox fx:id="mainLayout" layoutX="250.0" layoutY="105.0" prefHeight="245.0" prefWidth="100.0" />
+      <ChoiceBox fx:id="filter" layoutX="484.0" layoutY="72.0" prefHeight="25.0" prefWidth="95.0" />
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="600.0">
+         <menus>
+            <Menu mnemonicParsing="false" text="File">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Import JSON" />
+                  <MenuItem mnemonicParsing="false" text="Export JSON" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+              <items>
+                  <MenuItem mnemonicParsing="false" text="User Manual" />
+              </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+      <TextField fx:id="searchBar" layoutX="134.0" layoutY="72.0" prefHeight="25.0" prefWidth="321.0" />
+      <Label layoutX="58.0" layoutY="39.0" prefHeight="21.0" prefWidth="485.0" text="PLEASE ENTER THE NAME OF THE ARTIFACT YOU WANT TO SEARCH">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
