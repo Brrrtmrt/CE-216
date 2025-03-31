@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
+
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -12,79 +14,71 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 public class JSONOperations {
 
     //Data.json will be created in program main?, below is only the string of the path it does not actually create the file.
+
     private static Path databasePath = Paths.get(System.getProperty("user.dir"), "Data.json");
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Artifact.class, new ArtifactTypeAdapter())
+            .registerTypeAdapter(Dimension.class, new DimensionTypeAdapter())
+            .create();
+    private static final Type artifactListType = new TypeToken<ArrayList<Artifact>>() {
+    }.getType();
 
-    //This will not create duplicates.
     public static boolean importJSON(Path file) {
-        try {
-            String json = Files.readString(file);
-            ArrayList<Artifact> newList = deserializeList(json);
-
+        try (BufferedReader reader = Files.newBufferedReader(file)) {
+            ArrayList<Artifact> newList = gson.fromJson(reader, artifactListType);
             if (newList == null) {
                 return false;
             }
 
-            ArrayList<Artifact> existingList;
-            if (Files.exists(databasePath)) {
-                String currJSON = Files.readString(databasePath);
-                existingList = deserializeList(currJSON);
-                if (existingList == null) {
-                    existingList = new ArrayList<>();
-                }
-            } else {//if no Data.json no existingList
-                Path pt = Paths.get(System.getProperty("user.dir"), "Data.json"); //maybe redundant
-                Files.createFile(pt);
-                writeJSON(databasePath, newList);
-                return true;
-            }
-            //Key is Artifact ID
-            Set<Artifact> artifactSet = new HashSet<>(existingList);
+            ArrayList<Artifact> existingList = readExistingList();
+            Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
             artifactSet.addAll(newList);
-            writeJSON(databasePath, new ArrayList<>(artifactSet));
-            return true;
-
+            return writeJSON(databasePath, new ArrayList<>(artifactSet));
         } catch (IOException | JsonParseException e) {
             return false;
         }
-
     }
 
-    public static boolean exportJSON(Path in, Path out) {
+    //Need file selector JavaFX
+    public static boolean exportJSON(Path out) {
 
         return false;
     }
 
-    //Main JSON File for programs usage
-    //If you throw in same objects in list it will create duplicates.For now...
+
     public static boolean writeJSON(Path path, ArrayList<Artifact> list) {
-        try {
-            ArrayList<Artifact> existingList = new ArrayList<>();
-            if (Files.exists(path)) {
-                String currJSON = Files.readString(path);
-                existingList = deserializeList(currJSON);
-                if (existingList == null) {
-                    existingList = new ArrayList<>();
-                }
-            }
-
-            existingList.addAll(list);
-            String json = serialize(existingList);
-
-            try (FileWriter fw = new FileWriter(path.toFile())) {
-                fw.write(json);
-                return true;
-            }
+        ArrayList<Artifact> existingList = readExistingList();
+        Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
+        artifactSet.addAll(list);
+        try (FileWriter writer = new FileWriter(path.toFile())) {
+            gson.toJson(new ArrayList<>(artifactSet), writer);
+            return true;
         } catch (IOException e) {
             return false;
+        }
+    }
+
+    private static ArrayList<Artifact> readExistingList() {
+        if (Files.exists(databasePath)) {
+            try (BufferedReader reader = Files.newBufferedReader(databasePath)) {
+                ArrayList<Artifact> existingList = gson.fromJson(reader, artifactListType);
+                return existingList != null ? existingList : new ArrayList<>();
+            } catch (IOException e) {
+                return new ArrayList<>();
+            }
+        } else {
+            try {
+                Files.createFile(databasePath);
+            } catch (IOException e) {
+                return new ArrayList<>();
+            }
+            return new ArrayList<>();
         }
     }
 
@@ -93,45 +87,36 @@ public class JSONOperations {
         Artifact art = new Artifact("Foo", "Bar", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
         Artifact art2 = new Artifact("test", "test", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
         Artifact art3 = new Artifact("asddsa", "adsdas", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
-        ArrayList<Artifact> list = new ArrayList<>(Arrays.asList(art, art2, art3));
-        // writeJSON(databasePath, list);
-        // Path pt = Paths.get("Test.json");
-        // importJSON(pt);
+        Artifact art4 = new Artifact("asddaaaasa", "adsdas", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
+        Artifact art5 = new Artifact("fggfgffg", "adsdas", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
+        Artifact art6 = new Artifact("ooooooo", "adsdas", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
+
+        ArrayList<Artifact> list = new ArrayList<>(Arrays.asList(art, art2, art3, art4, art5, art6));
+
+        //Path pt = Paths.get("Test.json");
+        //importJSON(pt);
+        //writeJSON(databasePath, list);
     }
 
     @Deprecated
     public static String serialize(Artifact artifact) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Artifact.class, new ArtifactTypeAdapter()).registerTypeAdapter(Dimension.class, new DimensionTypeAdapter())
-                .create();
         return gson.toJson(artifact);
 
     }
 
     public static String serialize(ArrayList<Artifact> artifact) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Artifact.class, new ArtifactTypeAdapter()).registerTypeAdapter(Dimension.class, new DimensionTypeAdapter())
-                .create();
         return gson.toJson(artifact);
 
     }
 
     @Deprecated
     public static Artifact deserialize(String json) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Artifact.class, new ArtifactTypeAdapter()).registerTypeAdapter(Dimension.class, new DimensionTypeAdapter())
-                .create();
         return gson.fromJson(json, Artifact.class);
     }
 
 
     //If json is bad it will make the list null!!
     public static ArrayList<Artifact> deserializeList(String json) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Artifact.class, new ArtifactTypeAdapter()).registerTypeAdapter(Dimension.class, new DimensionTypeAdapter())
-                .create();
-        Type artifactListType = new TypeToken<ArrayList<Artifact>>() {
-        }.getType();
         return gson.fromJson(json, artifactListType);
     }
 
