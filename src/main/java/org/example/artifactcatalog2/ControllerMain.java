@@ -1,12 +1,11 @@
 package org.example.artifactcatalog2;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -22,6 +21,8 @@ public class ControllerMain implements Initializable {
     private TextField searchBar;
     @FXML
     private VBox mainLayout;
+    @FXML
+    private CheckMenuItem darkModeChecker;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
@@ -29,5 +30,12 @@ public class ControllerMain implements Initializable {
         HBox firsLine = new HBox();
         firsLine.setAlignment(Pos.CENTER);
 
+    }
+    public void darkMode(ActionEvent event){
+        String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
+        if(darkModeChecker.isSelected()){
+            Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
+            sceneMain.getStylesheets().add(darkModeCSS);
+        }
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
@@ -10,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mainLayout" alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.artifactcatalog2.ControllerMain">
+<VBox fx:id="mainLayout" alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.artifactcatalog2.ControllerMain">
    <children>
       <HBox prefHeight="29.0" prefWidth="596.0" VBox.vgrow="ALWAYS">
          <children>
@@ -20,6 +21,11 @@
                     <items>
                       <MenuItem mnemonicParsing="false" text="Import JSON" />
                         <MenuItem mnemonicParsing="false" text="Export JSON" />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Settings">
+                    <items>
+                        <CheckMenuItem fx:id="darkModeChecker" mnemonicParsing="false" onAction="#darkMode" text="Dark Mode" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
