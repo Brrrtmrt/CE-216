@@ -82,7 +82,7 @@ public class JSONOperations {
         }
     }
 
-    private static ArrayList<Artifact> readExistingList() {
+    public static ArrayList<Artifact> readExistingList() {
         if (Files.exists(databasePath)) {
             try (BufferedReader reader = Files.newBufferedReader(databasePath)) {
                 ArrayList<Artifact> existingList = gson.fromJson(reader, artifactListType);
