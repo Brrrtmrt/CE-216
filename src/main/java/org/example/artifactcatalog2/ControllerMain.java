@@ -31,10 +31,19 @@ public class ControllerMain implements Initializable {
     private Button searchButton;
     @FXML
     private ListView<String> myListResults;
+    private boolean isDarkModeOn = false;
+
+    public boolean isDarkModeOn(){
+        return isDarkModeOn;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
-        filter.setValue("Filter");
+
+
+
+
+        filter.setValue("Filter");   //naming the filer
         HBox firsLine = new HBox();
         firsLine.setAlignment(Pos.CENTER);
 
@@ -43,15 +52,17 @@ public class ControllerMain implements Initializable {
         myListResults.getItems().addAll(forTest);
 
     }
-    public void darkMode(ActionEvent event){
+    public void darkMode(){
         String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
         if(darkModeChecker.isSelected()){
             Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().add(darkModeCSS);
+            isDarkModeOn = true;
         }
         else{
             Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().remove(darkModeCSS);
+            isDarkModeOn = true;
         }
     }
 

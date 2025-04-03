@@ -50,3 +50,21 @@
 .choice-box .menu-item:hover {
     -fx-background-color: #5e5e5e;
 }
+
+.text-area {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: white;
+    -fx-border-color: #5e5e5e;
+}
+
+.text-area .content {
+    -fx-background-color: #3c3f41;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.label:hover {
+    -fx-text-fill: #bbbbbb;
+}
