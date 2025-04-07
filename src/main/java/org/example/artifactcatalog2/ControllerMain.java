@@ -14,7 +14,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class ControllerMain implements Initializable {
     @FXML
@@ -32,6 +35,8 @@ public class ControllerMain implements Initializable {
     @FXML
     private ListView<String> myListResults;
     private boolean isDarkModeOn = false;
+    @FXML
+    private MenuButton sortBy;
 
     public boolean isDarkModeOn(){
         return isDarkModeOn;
@@ -50,6 +55,14 @@ public class ControllerMain implements Initializable {
 
         String[] forTest = {"aasd", "asdas", "dfdf", "szfsdfds"};
         myListResults.getItems().addAll(forTest);
+
+
+        String[] sortingByItems = {"Hellenistic", "Necklace" }; //these one should be the existing tags. I will made up some for the sake of demonstration
+        for(String tags : sortingByItems){
+            CheckMenuItem item = new CheckMenuItem(tags);
+            item.setOnAction(e->tagSelected());  // listener for all the tags it gets triggered if one of them selected or deselected
+            sortBy.getItems().add(item);
+        }
 
     }
     public void darkMode(){
@@ -77,6 +90,20 @@ public class ControllerMain implements Initializable {
         }
         catch (Exception ex){
             ex.printStackTrace();
+        }
+    }
+
+    public void tagSelected(){
+        List<String> selectedTags = sortBy.getItems().stream()
+                .filter(i -> i instanceof CheckMenuItem)
+                .map(i -> (CheckMenuItem) i)
+                .filter(CheckMenuItem::isSelected)
+                .map(MenuItem::getText)
+                .collect(Collectors.toList());
+
+        ArrayList<String> selectedTagsArr = new ArrayList<>(selectedTags);   // selected elements dynamic arraylist
+        for(String cur : selectedTagsArr){
+            System.out.println("element: " + cur);
         }
     }
 }
