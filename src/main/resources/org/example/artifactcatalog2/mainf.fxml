@@ -49,6 +49,8 @@
          <children>
             <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="375.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="searchButton" mnemonicParsing="false" onAction="#search" prefHeight="26.0" prefWidth="57.0" text="Search" />
+             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteArtifact" prefHeight="26.0"
+                     prefWidth="57.0" text="Delete"/>
             <MenuButton fx:id="sortBy" mnemonicParsing="false" text="Sort By Tag" />
             <ChoiceBox fx:id="filter" prefHeight="25.0" prefWidth="57.0" />
          </children>
