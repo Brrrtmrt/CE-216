@@ -111,7 +111,7 @@ public class JSONOperations {
 
         ArrayList<Artifact> list = new ArrayList<>(Arrays.asList(art, art2, art3, art4, art5, art6));
 */
-        Path pt = Paths.get("Test.json");
+        //Path pt = Paths.get("Test.json");
         //importJSON(pt);
         // writeJSON(databasePath, list);
     }

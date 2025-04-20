@@ -37,13 +37,10 @@ public class ControllerMain implements Initializable {
     private boolean isDarkModeOn = false;
     @FXML
     private MenuButton sortBy;
-
-    private ArrayList<Artifact> loadedList;
-    private Artifact selectedArtifact = null;
-
     @FXML
     private Button deleteButton;
-
+    private ArrayList<Artifact> loadedList;
+    private Artifact selectedArtifact = null;
 
     public void refresh() {
         loadedList = JSONOperations.readExistingList();
@@ -54,14 +51,16 @@ public class ControllerMain implements Initializable {
         if (selectedArtifact == null) {
             return;
         }
+        System.out.println("Attempting to delete artifact with ID: " + selectedArtifact.getID());
 
         //DBG
         if (UserOperations.deleteArtifact(selectedArtifact.getID())) {
+            System.out.println("Artifact deleted successfully.");
             loadedList.remove(selectedArtifact);
             myListResults.getItems().remove(selectedArtifact);
             refresh();
         } else {
-            System.out.println("Delete fail");
+            System.out.println("Delete failed for artifact with ID: " + selectedArtifact.getID());
         }
     }
 
