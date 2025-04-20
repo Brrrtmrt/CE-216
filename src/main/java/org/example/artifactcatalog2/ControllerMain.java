@@ -1,5 +1,7 @@
 package org.example.artifactcatalog2;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,21 +49,33 @@ public class ControllerMain implements Initializable {
         myListResults.getItems().addAll(loadedList);
     }
 
-    public void deleteArtifact(ActionEvent event) {
-        if (selectedArtifact == null) {
-            return;
-        }
-        System.out.println("Attempting to delete artifact with ID: " + selectedArtifact.getID());
+    public void deleteTask(ActionEvent event) {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Artifact toDelete = selectedArtifact; //if user clicks another during deletion it won't matter
+                if (toDelete == null) {
+                    return null;
+                }
+                System.out.println("Attempting to delete artifact with ID: " + toDelete.getID());
 
-        //DBG
-        if (UserOperations.deleteArtifact(selectedArtifact.getID())) {
-            System.out.println("Artifact deleted successfully.");
-            loadedList.remove(selectedArtifact);
-            myListResults.getItems().remove(selectedArtifact);
-            refresh();
-        } else {
-            System.out.println("Delete failed for artifact with ID: " + selectedArtifact.getID());
-        }
+                boolean isDeleted = UserOperations.deleteArtifact(toDelete.getID());
+                Platform.runLater(() -> {
+                    if (isDeleted) {
+                        System.out.println("Artifact deleted successfully.");
+                        loadedList.remove(toDelete);
+                        myListResults.getItems().remove(toDelete);
+                        refresh();
+                    } else {
+                        System.out.println("Delete failed for artifact with ID: " + toDelete.getID());
+                    }
+                });
+                return null;
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public boolean isDarkModeOn() {
