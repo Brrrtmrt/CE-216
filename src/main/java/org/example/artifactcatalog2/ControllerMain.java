@@ -41,39 +41,52 @@ public class ControllerMain implements Initializable {
     private MenuButton sortBy;
     @FXML
     private Button deleteButton;
+    @FXML
+    private Button exportButton;
     private ArrayList<Artifact> loadedList;
-    private Artifact selectedArtifact = null;
+    private ArrayList<Artifact> selectedArtifacts = new ArrayList<>();
 
     public void refresh() {
         loadedList = JSONOperations.readExistingList();
         myListResults.getItems().addAll(loadedList);
     }
 
-    public void deleteTask(ActionEvent event) {
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                Artifact toDelete = selectedArtifact; //if user clicks another during deletion it won't matter
-                if (toDelete == null) {
-                    return null;
+    public void delete(ActionEvent event) {
+        Runnable runnable = () -> {
+            synchronized (loadedList) {
+                if (selectedArtifacts == null || selectedArtifacts.isEmpty()) {
+                    return;
                 }
-                System.out.println("Attempting to delete artifact with ID: " + toDelete.getID());
+                ArrayList<Artifact> toDeleteList = new ArrayList<>(selectedArtifacts);
 
-                boolean isDeleted = UserOperations.deleteArtifact(toDelete.getID());
-                Platform.runLater(() -> {
-                    if (isDeleted) {
-                        System.out.println("Artifact deleted successfully.");
-                        loadedList.remove(toDelete);
-                        myListResults.getItems().remove(toDelete);
+                boolean isDeleted = UserOperations.deleteArtifacts(toDeleteList);
+                if (isDeleted) {
+                    Platform.runLater(() -> {
+                        System.out.println("Artifacts deleted successfully.");
+                        loadedList.removeAll(toDeleteList);
+                        myListResults.getItems().removeAll(toDeleteList);
                         refresh();
-                    } else {
-                        System.out.println("Delete failed for artifact with ID: " + toDelete.getID());
-                    }
-                });
-                return null;
+                    });
+                } else {
+                    System.out.println("Delete operation failed.");
+                }
             }
         };
-        Thread thread = new Thread(task);
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void export(ActionEvent event) {
+        Runnable runnable = () -> {
+            if (selectedArtifacts == null || selectedArtifacts.isEmpty()) {
+                return;
+            }
+            ArrayList<Artifact> toExport = new ArrayList<>(selectedArtifacts);
+            boolean flag = JSONOperations.exportJSON(toExport);
+            if (flag) System.out.println("Export operation completed.");
+        };
+        Thread thread = new Thread(runnable);
         thread.setDaemon(true);
         thread.start();
     }
@@ -86,15 +99,6 @@ public class ControllerMain implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         refresh();
-
-        //when clicked to any Artifact selects them
-
-        myListResults.getSelectionModel().selectedItemProperty().addListener((observable, old, selected) -> {
-            selectedArtifact = selected;
-            System.out.println("Selected Artifact: " + selectedArtifact);
-        });
-
-
         filter.setValue("Filter");   //naming the filer
         HBox firsLine = new HBox();
         firsLine.setAlignment(Pos.CENTER);
@@ -105,17 +109,31 @@ public class ControllerMain implements Initializable {
 */
 
         myListResults.setCellFactory(listView -> new ListCell<>() {
+            private final CheckBox checkBox = new CheckBox();
             @Override
             protected void updateItem(Artifact artifact, boolean empty) {
                 super.updateItem(artifact, empty);
                 if (empty || artifact == null) {
                     setText(null);
+                    setGraphic(null);
                 } else {
-                    setText(artifact.getID().concat("\n" + artifact.getName()));
+                    checkBox.setText(artifact.getID() + "\n" + artifact.getName());
+                    checkBox.setSelected(myListResults.getSelectionModel().getSelectedItems().contains(artifact));
+                    checkBox.setOnAction(event -> {
+                        if (checkBox.isSelected()) {
+                            if (!selectedArtifacts.contains(artifact)) {
+                                selectedArtifacts.add(artifact);
+                                System.out.println("Artifact added: " + artifact.getID());
+                            }
+                        } else {
+                            selectedArtifacts.remove(artifact);
+                            System.out.println("Artifact removed: " + artifact.getID());
+                        }
+                    });
+                    setGraphic(checkBox);
                 }
             }
         });
-
 
         String[] sortingByItems = {"Hellenistic", "Necklace", "Tag20"}; //these one should be the existing tags. I will made up some for the sake of demonstration
         for (String tags : sortingByItems) {

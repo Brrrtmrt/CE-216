@@ -12,13 +12,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class JSONOperations {
 
     //Data.json will be created in program main?, below is only the string of the path it does not actually create the file.
 
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
     private static Path databasePath = Paths.get(System.getProperty("user.dir"), "Data.json");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Artifact.class, new ArtifactTypeAdapter())
@@ -28,6 +33,7 @@ public class JSONOperations {
     }.getType();
 
     public static boolean importJSON(Path file) {
+        lock.readLock().lock();
         try (BufferedReader reader = Files.newBufferedReader(file)) {
             ArrayList<Artifact> newList = gson.fromJson(reader, artifactListType);
             if (newList == null) {
@@ -44,59 +50,77 @@ public class JSONOperations {
             return writeJSON(databasePath, new ArrayList<>(artifactSet));
         } catch (IOException | JsonParseException e) {
             return false;
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     //Need file selector JavaFX
-    public static boolean exportJSON(Path out, ArrayList<Artifact> selectedArtifacts) {
+    public static boolean exportJSON(ArrayList<Artifact> selectedArtifacts) {
         /*
         SELECT ARTIFACTS FROM GUI
         SELECT OUT FILE FROM JAVAFX FILE SELECTOR
         CALL THIS WITH THOSE
          */
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss");
+        String date = LocalDateTime.now().format(formatter);
+        Path out = Paths.get(System.getProperty("user.dir"), "Export" + date + ".json");
         return noCheckWriteJSON(out, selectedArtifacts);
     }
 
 
     public static boolean writeJSON(Path path, ArrayList<Artifact> list) {
-        ArrayList<Artifact> existingList = readExistingList();
-        Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
-        boolean flag = artifactSet.addAll(list);
-        if (!flag) {
-            return false;
-        }
-        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-            gson.toJson(new ArrayList<>(artifactSet), writer);
-            return true;
-        } catch (IOException e) {
-            return false;
+        ArrayList<Artifact> existingList = readExistingList(); //release read lock
+        lock.writeLock().lock();
+        try {
+            Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
+            boolean flag = artifactSet.addAll(list);
+            if (!flag) {
+                return false;
+            }
+            try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+                gson.toJson(new ArrayList<>(artifactSet), writer);
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
     public static boolean noCheckWriteJSON(Path path, ArrayList<Artifact> list) {
+        lock.writeLock().lock();
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             gson.toJson(list, writer);
             return true;
         } catch (IOException e) {
             return false;
+        } finally {
+            lock.writeLock().unlock();
         }
-    }
 
+    }
     public static ArrayList<Artifact> readExistingList() {
-        if (Files.exists(databasePath)) {
-            try (BufferedReader reader = Files.newBufferedReader(databasePath)) {
-                ArrayList<Artifact> existingList = gson.fromJson(reader, artifactListType);
-                return existingList != null ? existingList : new ArrayList<>();
-            } catch (IOException e) {
-                return new ArrayList<>();
-            }
-        } else {
-            try {
-                Files.createFile(databasePath);
-            } catch (IOException e) {
-                return new ArrayList<>();
+        lock.readLock().lock();
+        try {
+            if (Files.exists(databasePath)) {
+                try (BufferedReader reader = Files.newBufferedReader(databasePath)) {
+                    ArrayList<Artifact> existingList = gson.fromJson(reader, artifactListType);
+                    return existingList != null ? existingList : new ArrayList<>();
+                } catch (IOException e) {
+                    return new ArrayList<>();
+                }
+            } else {
+                try {
+                    Files.createFile(databasePath);
+                } catch (IOException e) {
+                    return new ArrayList<>();
+                }
             }
             return new ArrayList<>();
+        } finally {
+            lock.readLock().unlock();
         }
     }
 

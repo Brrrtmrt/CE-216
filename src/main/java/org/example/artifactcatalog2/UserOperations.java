@@ -41,6 +41,16 @@ public class UserOperations {
         }
     }
 
+    public static boolean deleteArtifacts(ArrayList<Artifact> artifacts) {
+        ArrayList<Artifact> currentList = JSONOperations.readExistingList();
+        for (Artifact artifact : artifacts) {
+            currentList.remove(artifact);
+        }
+        return JSONOperations.noCheckWriteJSON(JSONOperations.getDb(), currentList);
+
+
+    }
+
     public static List<Artifact> list() {
         return JSONOperations.readExistingList();
     }
