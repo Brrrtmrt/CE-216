@@ -33,25 +33,26 @@ public class JSONOperations {
     }.getType();
 
     public static boolean importJSON(Path file) {
-        lock.readLock().lock();
+        ArrayList<Artifact> newList;//no need for lock
         try (BufferedReader reader = Files.newBufferedReader(file)) {
-            ArrayList<Artifact> newList = gson.fromJson(reader, artifactListType);
+            newList = gson.fromJson(reader, artifactListType);
             if (newList == null) {
                 return false;
             }
-
-            ArrayList<Artifact> existingList = readExistingList();
+        } catch (IOException | JsonParseException e) {
+            return false;
+        }
+        ArrayList<Artifact> existingList = readExistingListWithoutLock();
+        lock.writeLock().lock();
+        try {
             Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
-            //check if there is a difference if not do not write.
             boolean flag = artifactSet.addAll(newList);
             if (!flag) {
                 return false;
             }
             return writeJSON(databasePath, new ArrayList<>(artifactSet));
-        } catch (IOException | JsonParseException e) {
-            return false;
         } finally {
-            lock.readLock().unlock();
+            lock.writeLock().unlock();
         }
     }
 
@@ -101,6 +102,7 @@ public class JSONOperations {
         }
 
     }
+
     public static ArrayList<Artifact> readExistingList() {
         lock.readLock().lock();
         try {
@@ -111,7 +113,14 @@ public class JSONOperations {
                 } catch (IOException e) {
                     return new ArrayList<>();
                 }
-            } else {
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+
+        lock.writeLock().lock();
+        try {
+            if (!Files.exists(databasePath)) {
                 try {
                     Files.createFile(databasePath);
                 } catch (IOException e) {
@@ -120,13 +129,31 @@ public class JSONOperations {
             }
             return new ArrayList<>();
         } finally {
-            lock.readLock().unlock();
+            lock.writeLock().unlock();
+        }
+    }
+
+    private static ArrayList<Artifact> readExistingListWithoutLock() {
+        if (Files.exists(databasePath)) {
+            try (BufferedReader reader = Files.newBufferedReader(databasePath)) {
+                ArrayList<Artifact> existingList = gson.fromJson(reader, artifactListType);
+                return existingList != null ? existingList : new ArrayList<>();
+            } catch (IOException e) {
+                return new ArrayList<>();
+            }
+        } else {
+            try {
+                Files.createFile(databasePath);
+            } catch (IOException e) {
+                return new ArrayList<>();
+            }
+            return new ArrayList<>();
         }
     }
 
     public static void main(String[] args) {
         //TEST object
-      /*  Artifact art = new Artifact("Foo", "Bar", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
+       /* Artifact art = new Artifact("Foo", "Bar", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
         Artifact art2 = new Artifact("test", "test", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
         Artifact art3 = new Artifact("asddsa", "adsdas", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
         Artifact art4 = new Artifact("asddaaaasa", "adsdas", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
@@ -135,9 +162,10 @@ public class JSONOperations {
 
         ArrayList<Artifact> list = new ArrayList<>(Arrays.asList(art, art2, art3, art4, art5, art6));
 */
-        //Path pt = Paths.get("Test.json");
+        //  Path pt = Paths.get("Test.json");
         //importJSON(pt);
-        // writeJSON(databasePath, list);
+        //noCheckWriteJSON(databasePath, list);
+
     }
 
     @Deprecated
