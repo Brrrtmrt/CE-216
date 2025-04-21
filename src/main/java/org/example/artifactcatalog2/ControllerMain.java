@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class ControllerMain implements Initializable {
@@ -43,38 +45,91 @@ public class ControllerMain implements Initializable {
     private Button deleteButton;
     @FXML
     private Button exportButton;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); //??
     private ArrayList<Artifact> loadedList;
     private ArrayList<Artifact> selectedArtifacts = new ArrayList<>();
+    @FXML
+    private CheckBox selectAll;
+
 
     public void refresh() {
         loadedList = JSONOperations.readExistingList();
         myListResults.getItems().addAll(loadedList);
     }
 
+    //UI Skull 10 saniye
     public void delete(ActionEvent event) {
-        Runnable runnable = () -> {
-            synchronized (loadedList) {
+        Task<Void> deleteTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
                 if (selectedArtifacts == null || selectedArtifacts.isEmpty()) {
-                    return;
+                    return null;
                 }
+
                 ArrayList<Artifact> toDeleteList = new ArrayList<>(selectedArtifacts);
 
+
                 boolean isDeleted = UserOperations.deleteArtifacts(toDeleteList);
+
                 if (isDeleted) {
                     Platform.runLater(() -> {
                         System.out.println("Artifacts deleted successfully.");
-                        loadedList.removeAll(toDeleteList);
-                        myListResults.getItems().removeAll(toDeleteList);
-                        refresh();
+                        loadedList.removeIf(toDeleteList::contains);
+                        selectedArtifacts.removeIf(toDeleteList::contains);
+                        myListResults.getItems().removeIf(toDeleteList::contains);
+                        toDeleteList.clear();
                     });
                 } else {
-                    System.out.println("Delete operation failed.");
+                    Platform.runLater(() -> System.out.println("Delete operation failed."));
                 }
+
+                return null;
             }
         };
-        Thread thread = new Thread(runnable);
+
+        deleteTask.setOnFailed(e -> {
+            System.out.println("An error occurred during the delete operation.");
+        });
+
+        Thread thread = new Thread(deleteTask);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    public void select(ActionEvent event) {
+        boolean isSelected = selectAll.isSelected();
+        selectedArtifacts.clear();
+        if (isSelected) {
+            selectedArtifacts.addAll(loadedList);
+        }
+
+        myListResults.setCellFactory(listView -> new ListCell<>() {
+            private final CheckBox checkBox = new CheckBox();
+
+            @Override
+            protected void updateItem(Artifact artifact, boolean empty) {
+                super.updateItem(artifact, empty);
+                if (empty || artifact == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    checkBox.setText(artifact.getID() + "\n" + artifact.getName());
+                    checkBox.setSelected(isSelected);
+                    checkBox.setOnAction(e -> {
+                        if (checkBox.isSelected()) {
+                            if (!selectedArtifacts.contains(artifact)) {
+                                selectedArtifacts.add(artifact);
+                            }
+                        } else {
+                            selectedArtifacts.remove(artifact);
+                        }
+                    });
+                    setGraphic(checkBox);
+                }
+            }
+        });
+
+        myListResults.refresh();
     }
 
     public void export(ActionEvent event) {
@@ -84,7 +139,13 @@ public class ControllerMain implements Initializable {
             }
             ArrayList<Artifact> toExport = new ArrayList<>(selectedArtifacts);
             boolean flag = JSONOperations.exportJSON(toExport);
-            if (flag) System.out.println("Export operation completed.");
+            Platform.runLater(() -> {
+                if (flag) {
+                    System.out.println("Export operation completed.");
+                } else {
+                    System.out.println("Export operation failed.");
+                }
+            });
         };
         Thread thread = new Thread(runnable);
         thread.setDaemon(true);
@@ -110,6 +171,7 @@ public class ControllerMain implements Initializable {
 
         myListResults.setCellFactory(listView -> new ListCell<>() {
             private final CheckBox checkBox = new CheckBox();
+
             @Override
             protected void updateItem(Artifact artifact, boolean empty) {
                 super.updateItem(artifact, empty);

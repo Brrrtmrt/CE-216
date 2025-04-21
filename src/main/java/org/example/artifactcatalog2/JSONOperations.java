@@ -42,7 +42,7 @@ public class JSONOperations {
         } catch (IOException | JsonParseException e) {
             return false;
         }
-        ArrayList<Artifact> existingList = readExistingListWithoutLock();
+        ArrayList<Artifact> existingList = readExistingList();
         lock.writeLock().lock();
         try {
             Set<Artifact> artifactSet = new LinkedHashSet<>(existingList);
@@ -65,7 +65,7 @@ public class JSONOperations {
          */
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss");
         String date = LocalDateTime.now().format(formatter);
-        Path out = Paths.get(System.getProperty("user.dir"), "Export" + date + ".json");
+        Path out = Paths.get(System.getProperty("user.dir"), "Export " + date + ".json");
         return noCheckWriteJSON(out, selectedArtifacts);
     }
 
@@ -133,24 +133,6 @@ public class JSONOperations {
         }
     }
 
-    private static ArrayList<Artifact> readExistingListWithoutLock() {
-        if (Files.exists(databasePath)) {
-            try (BufferedReader reader = Files.newBufferedReader(databasePath)) {
-                ArrayList<Artifact> existingList = gson.fromJson(reader, artifactListType);
-                return existingList != null ? existingList : new ArrayList<>();
-            } catch (IOException e) {
-                return new ArrayList<>();
-            }
-        } else {
-            try {
-                Files.createFile(databasePath);
-            } catch (IOException e) {
-                return new ArrayList<>();
-            }
-            return new ArrayList<>();
-        }
-    }
-
     public static void main(String[] args) {
         //TEST object
        /* Artifact art = new Artifact("Foo", "Bar", "ManuScript", "İzmir", new ArrayList<>(Arrays.asList("Test", "MS")), "A", LocalDate.of(2025, 10, 10), "İzmir", new Dimension(10, 10, 10), 10000, new ArrayList<>(Arrays.asList("MS", "value")));
@@ -162,8 +144,8 @@ public class JSONOperations {
 
         ArrayList<Artifact> list = new ArrayList<>(Arrays.asList(art, art2, art3, art4, art5, art6));
 */
-        //  Path pt = Paths.get("Test.json");
-        //importJSON(pt);
+        Path pt = Paths.get("Test.json");
+        importJSON(pt);
         //noCheckWriteJSON(databasePath, list);
 
     }
