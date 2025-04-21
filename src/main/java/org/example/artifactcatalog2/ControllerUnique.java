@@ -24,6 +24,7 @@ public class ControllerUnique implements Initializable {
     private TextArea explanationArtifact;
 
 
+
     public boolean isDarkModeOn(){
         return isDarkModeOn;
     }
@@ -47,5 +48,25 @@ public class ControllerUnique implements Initializable {
             sceneMain.getStylesheets().remove(darkModeCSS);
             isDarkModeOn = true;
         }
+    }
+
+    public void selected(Artifact selectedArtifact){
+        System.out.println("selected method activated");
+        titleArtifact.setText(selectedArtifact.getName());
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Name: ").append(selectedArtifact.getName()).append("\n");
+        sb.append("Category: ").append(selectedArtifact.getCategory()).append("\n");
+        sb.append("Civilization: ").append(selectedArtifact.getCivilization()).append("\n");
+        sb.append("Discovery Location: ").append(selectedArtifact.getDiscoveryLocation()).append("\n");
+        sb.append("Composition: ").append(selectedArtifact.getComposition()).append("\n");
+        sb.append("Discovery Date: ").append(selectedArtifact.getDiscoveryDate()).append("\n");
+        sb.append("Current Place: ").append(selectedArtifact.getCurrentPlace()).append("\n");
+        sb.append("Dimensions: ").append(selectedArtifact.getDimension()).append("\n");
+        sb.append("Weight: ").append(selectedArtifact.getWeight()).append("\n");
+        sb.append("Tags: ").append(String.join(", ", selectedArtifact.getTags())).append("\n");
+        sb.append("Unique Identifier: ").append(selectedArtifact.getID());
+
+        explanationArtifact.setText(sb.toString());
     }
 }

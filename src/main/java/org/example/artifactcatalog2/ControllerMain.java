@@ -221,14 +221,34 @@ public class ControllerMain implements Initializable {
 
     public void search(ActionEvent event) {
         //method that gets activated when user press search button
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("uniquePage.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if(selectedArtifacts.size() != 1){
+            System.out.println("You have to select 1 element to view its page!");
+            return;
+        }
+        else{
+            try {
+
+
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("uniquePage.fxml"));
+
+
+                Parent root = loader.load();
+
+                ControllerUnique unique = loader.getController();
+                //unique.selected(selectedArtifacts.getFirst());
+                Platform.runLater(() -> unique.selected(selectedArtifacts.getFirst()));
+
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+
+
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
