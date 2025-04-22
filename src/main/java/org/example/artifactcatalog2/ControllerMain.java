@@ -241,6 +241,13 @@ public class ControllerMain implements Initializable {
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
+
+                Stage stage2 = (Stage) mainLabel.getScene().getWindow();
+                if(stage2.isFullScreen()){
+                    stage.setFullScreen(true);
+                }
+
+                stage.setMaximized(true);
                 stage.setScene(scene);
                 stage.show();
 
