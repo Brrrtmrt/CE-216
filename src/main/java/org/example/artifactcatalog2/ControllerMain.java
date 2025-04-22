@@ -1,6 +1,7 @@
 package org.example.artifactcatalog2;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,6 +51,8 @@ public class ControllerMain implements Initializable {
     private ArrayList<Artifact> selectedArtifacts = new ArrayList<>();
     @FXML
     private CheckBox selectAll;
+    @FXML
+    private HBox lastRow;
 
 
     public void refresh() {
@@ -168,6 +171,9 @@ public class ControllerMain implements Initializable {
        /* String[] forTest = {"aasd", "asdas", "dfdf", "szfsdfds"};
         myListResults.getItems().addAll(forTest);
 */
+        Button bttnSearch = new Button("Search");
+        bttnSearch.setOnAction(event -> search(event));
+        lastRow.getChildren().add(bttnSearch);
 
         myListResults.setCellFactory(listView -> new ListCell<>() {
             private final CheckBox checkBox = new CheckBox();
@@ -267,5 +273,22 @@ public class ControllerMain implements Initializable {
         }
     }
 
+    public void search(ActionEvent event){
+        String currentText = searchBar.getText();
+        ObservableList<Artifact> items = myListResults.getItems();
+
+        for(Artifact a : loadedList){
+            if(a.getName().contains(currentText)){
+                if(!items.contains(a)){
+                    items.add(a);
+                }
+            }
+            else{
+                if(items.contains(a)){
+                    items.remove(a);
+                }
+            }
+        }
+    }
 
 }
