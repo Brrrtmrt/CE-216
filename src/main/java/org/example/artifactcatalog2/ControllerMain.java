@@ -35,7 +35,7 @@ public class ControllerMain implements Initializable {
     @FXML
     private CheckMenuItem darkModeChecker;
     @FXML
-    private Button searchButton;
+    private Button selectButton;
     @FXML
     private ListView<Artifact> myListResults;
     private boolean isDarkModeOn = false;
@@ -219,7 +219,7 @@ public class ControllerMain implements Initializable {
         }
     }
 
-    public void search(ActionEvent event) {
+    public void goPage(ActionEvent event) {
         //method that gets activated when user press search button
         if(selectedArtifacts.size() != 1){
             System.out.println("You have to select 1 element to view its page!");
@@ -234,24 +234,23 @@ public class ControllerMain implements Initializable {
 
 
                 Parent root = loader.load();
-
                 ControllerUnique unique = loader.getController();
+
                 //unique.selected(selectedArtifacts.getFirst());
                 Platform.runLater(() -> unique.selected(selectedArtifacts.getFirst()));
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
 
-                Stage stage2 = (Stage) mainLabel.getScene().getWindow();
-                if(stage2.isFullScreen()){
-                    stage.setFullScreen(true);
-                }
+                boolean isFull = stage.isFullScreen();
+                boolean isMax = stage.isMaximized();
 
-                stage.setMaximized(true);
                 stage.setScene(scene);
-                stage.show();
 
-
+                Platform.runLater(() -> {   //IDK WHY IT RESETS THE FULLSCREEN OR MAX SCREEN
+                    stage.setFullScreen(isFull);
+                    stage.setMaximized(isMax);
+                });
 
             } catch (Exception ex) {
                 ex.printStackTrace();

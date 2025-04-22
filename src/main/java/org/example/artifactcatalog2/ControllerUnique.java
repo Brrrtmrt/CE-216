@@ -100,14 +100,17 @@ public class ControllerUnique implements Initializable {
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node)e.getSource()).getScene().getWindow();
 
-            Stage stage2 = (Stage) explanationArtifact.getScene().getWindow();
-            if(stage2.isFullScreen()){
+
+            if(stage.isFullScreen()){
                 stage.setFullScreen(true);
+            }
+            if(stage.isMaximized()){
+                stage.setMaximized(true);
             }
 
             stage.setMaximized(true);
             stage.setScene(scene);
-            stage.show();
+
 
         }catch (Exception exception){
             exception.printStackTrace();
