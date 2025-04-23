@@ -23,8 +23,8 @@
                <menus>
                   <Menu mnemonicParsing="false" text="File">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Import JSON" />
-                        <MenuItem mnemonicParsing="false" text="Export JSON" />
+                        <MenuItem fx:id="importJSON" mnemonicParsing="false" text="Import JSON"/>
+                        <MenuItem fx:id="exportJSON" mnemonicParsing="false" text="Export JSON"/>
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Settings">
@@ -51,7 +51,6 @@
             <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="375.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="selectButton" mnemonicParsing="false" onAction="#goPage" prefHeight="25.0" prefWidth="84.0" text="Go Its Page" />
              <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#delete" prefHeight="26.0" prefWidth="57.0" text="Delete" />
-             <Button fx:id="exportButton" mnemonicParsing="false" onAction="#export" prefHeight="26.0" prefWidth="57.0" text="Export" />
              <CheckBox fx:id="selectAll" mnemonicParsing="false" onAction="#select" prefHeight="26.0" prefWidth="57.0" />
             <MenuButton fx:id="sortBy" mnemonicParsing="false" text="Sort By Tag" />
             <ChoiceBox fx:id="filter" prefHeight="25.0" prefWidth="57.0" />

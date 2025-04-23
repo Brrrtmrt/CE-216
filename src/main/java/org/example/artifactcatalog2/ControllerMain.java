@@ -14,9 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -44,8 +47,6 @@ public class ControllerMain implements Initializable {
     private MenuButton sortBy;
     @FXML
     private Button deleteButton;
-    @FXML
-    private Button exportButton;
     private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); //??
     private ArrayList<Artifact> loadedList;
     private ArrayList<Artifact> selectedArtifacts = new ArrayList<>();
@@ -53,6 +54,10 @@ public class ControllerMain implements Initializable {
     private CheckBox selectAll;
     @FXML
     private HBox lastRow;
+    @FXML
+    private MenuItem exportJSON;
+    @FXML
+    private MenuItem importJSON;
 
 
     public void refresh() {
@@ -155,6 +160,20 @@ public class ControllerMain implements Initializable {
         thread.start();
     }
 
+    public void importJSON(ActionEvent event) {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Select JSON file to import");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files", "*.json"));
+        Stage stage = (Stage) ((MenuItem) event.getSource()).getParentPopup().getOwnerWindow();
+        File selectedFile = fc.showOpenDialog(stage);
+        if (selectedFile != null) {
+            Path filePath = selectedFile.toPath();
+            System.out.println("File: " + filePath);
+            JSONOperations.importJSON(filePath);
+            refresh();
+        }
+    }
+
     public boolean isDarkModeOn() {
         return isDarkModeOn;
     }
@@ -162,10 +181,15 @@ public class ControllerMain implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        refresh();
+        refresh(); //creates db if not
         filter.setValue("Filter");   //naming the filer
         HBox firsLine = new HBox();
         firsLine.setAlignment(Pos.CENTER);
+
+        exportJSON.setOnAction(this::export);
+        importJSON.setOnAction(this::importJSON);
+
+
 
 
        /* String[] forTest = {"aasd", "asdas", "dfdf", "szfsdfds"};
@@ -227,13 +251,11 @@ public class ControllerMain implements Initializable {
 
     public void goPage(ActionEvent event) {
         //method that gets activated when user press search button
-        if(selectedArtifacts.size() != 1){
+        if (selectedArtifacts.size() != 1) {
             System.out.println("You have to select 1 element to view its page!");
             return;
-        }
-        else{
+        } else {
             try {
-
 
 
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("uniquePage.fxml"));
@@ -273,18 +295,17 @@ public class ControllerMain implements Initializable {
         }
     }
 
-    public void search(ActionEvent event){
+    public void search(ActionEvent event) {
         String currentText = searchBar.getText();
         ObservableList<Artifact> items = myListResults.getItems();
 
-        for(Artifact a : loadedList){
-            if(a.getName().contains(currentText)){
-                if(!items.contains(a)){
+        for (Artifact a : loadedList) {
+            if (a.getName().contains(currentText)) {
+                if (!items.contains(a)) {
                     items.add(a);
                 }
-            }
-            else{
-                if(items.contains(a)){
+            } else {
+                if (items.contains(a)) {
                     items.remove(a);
                 }
             }

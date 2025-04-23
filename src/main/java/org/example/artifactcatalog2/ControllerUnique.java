@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.Stack;
 
@@ -71,14 +72,14 @@ public class ControllerUnique implements Initializable {
     public void selected(Artifact selectedArtifact){
         System.out.println("selected method activated");
         titleArtifact.setText("Here is the page of the " + selectedArtifact.getName() + ":");
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         StringBuilder sb = new StringBuilder();
         sb.append("Name: ").append(selectedArtifact.getName()).append("\n");
         sb.append("Category: ").append(selectedArtifact.getCategory()).append("\n");
         sb.append("Civilization: ").append(selectedArtifact.getCivilization()).append("\n");
         sb.append("Discovery Location: ").append(selectedArtifact.getDiscoveryLocation()).append("\n");
         sb.append("Composition: ").append(selectedArtifact.getComposition()).append("\n");
-        sb.append("Discovery Date: ").append(selectedArtifact.getDiscoveryDate()).append("\n");
+        sb.append("Discovery Date: ").append(selectedArtifact.getDiscoveryDate().format(formatter)).append("\n");
         sb.append("Current Place: ").append(selectedArtifact.getCurrentPlace()).append("\n");
         sb.append("Dimensions: ").append("\n");
 
