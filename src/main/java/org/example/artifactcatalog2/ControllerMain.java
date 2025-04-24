@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -198,6 +199,13 @@ public class ControllerMain implements Initializable {
         Button bttnSearch = new Button("Search");
         bttnSearch.setOnAction(event -> search(event));
         lastRow.getChildren().add(bttnSearch);
+
+        searchBar.setOnKeyPressed(keyEvent -> {       //search func also works with button presses
+            if(keyEvent.getCode() == KeyCode.ENTER){
+                ActionEvent actionEvent = new ActionEvent(searchBar, null);
+                this.search(actionEvent);
+            }
+        });
 
         myListResults.setCellFactory(listView -> new ListCell<>() {
             private final CheckBox checkBox = new CheckBox();
