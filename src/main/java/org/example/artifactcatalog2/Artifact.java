@@ -118,7 +118,8 @@ public class Artifact {
     }
 
     public ArrayList<String> getTags() {
-        return tags;
+        return tags != null ? tags : new ArrayList<>();
+
     }
 
     public void setTags(ArrayList<String> tags) {

@@ -52,7 +52,7 @@
             <Button fx:id="selectButton" mnemonicParsing="false" onAction="#goPage" prefHeight="25.0" prefWidth="84.0" text="Go Its Page" />
              <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#delete" prefHeight="26.0" prefWidth="57.0" text="Delete" />
              <CheckBox fx:id="selectAll" mnemonicParsing="false" onAction="#select" prefHeight="26.0" prefWidth="57.0" />
-            <MenuButton fx:id="sortBy" mnemonicParsing="false" text="Sort By Tag" />
+             <MenuButton fx:id="ListByTags" mnemonicParsing="false" onMouseClicked="#tags" text="List By Tag"/>
             <ChoiceBox fx:id="filter" prefHeight="25.0" prefWidth="57.0" />
          </children>
       </HBox>

@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class ControllerMain implements Initializable {
     @FXML
@@ -45,7 +45,7 @@ public class ControllerMain implements Initializable {
     private ListView<Artifact> myListResults;
     private boolean isDarkModeOn = false;
     @FXML
-    private MenuButton sortBy;
+    private MenuButton ListByTags;
     @FXML
     private Button deleteButton;
     private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); //??
@@ -64,6 +64,57 @@ public class ControllerMain implements Initializable {
     public void refresh() {
         loadedList = JSONOperations.readExistingList();
         myListResults.getItems().addAll(loadedList);
+    }
+
+    public void tags(MouseEvent event) {
+
+        if (loadedList == null || loadedList.isEmpty()) {
+            System.out.println("Loaded list is empty or null.");
+            return;
+        }
+
+        if (!ListByTags.getItems().isEmpty()) {
+            return;
+        }
+
+        List<String> uniqueTags = loadedList.stream()
+                .flatMap(artifact -> artifact.getTags().stream())
+                .distinct().sorted()
+                .toList();
+        ListByTags.getItems().clear();
+
+
+        for (String tag : uniqueTags) {
+            CheckBox item = new CheckBox(tag);
+            item.setOnAction(e ->
+                    updateListViewWithSelectedTags());// listener for all the tags, triggered when one is selected or deselected
+            CustomMenuItem ci = new CustomMenuItem(item);
+            ci.setHideOnClick(false);
+            ListByTags.getItems().add(ci);
+        }
+    }
+
+    public void updateListViewWithSelectedTags() {
+        List<String> selectedTags = ListByTags.getItems().stream()
+                .filter(CustomMenuItem.class::isInstance)
+                .map(CustomMenuItem.class::cast)
+                .map(CustomMenuItem::getContent)
+                .filter(CheckBox.class::isInstance)
+                .map(CheckBox.class::cast)
+                .filter(CheckBox::isSelected)
+                .map(CheckBox::getText)
+                .toList();
+
+        if (selectedTags.isEmpty()) {
+            myListResults.getItems().setAll(loadedList);
+            return;
+        }
+
+        List<Artifact> filteredList = loadedList.stream()
+                .filter(artifact -> artifact.getTags().containsAll(selectedTags))
+                .toList();
+
+        myListResults.getItems().setAll(filteredList);
     }
 
     //UI Skull 10 saniye
@@ -189,6 +240,8 @@ public class ControllerMain implements Initializable {
 
         exportJSON.setOnAction(this::export);
         importJSON.setOnAction(this::importJSON);
+        ListByTags.setOnMouseClicked(this::tags);
+        tags(null);
 
 
 
@@ -201,7 +254,7 @@ public class ControllerMain implements Initializable {
         lastRow.getChildren().add(bttnSearch);
 
         searchBar.setOnKeyPressed(keyEvent -> {       //search func also works with button presses
-            if(keyEvent.getCode() == KeyCode.ENTER){
+            if (keyEvent.getCode() == KeyCode.ENTER) {
                 ActionEvent actionEvent = new ActionEvent(searchBar, null);
                 this.search(actionEvent);
             }
@@ -234,14 +287,6 @@ public class ControllerMain implements Initializable {
                 }
             }
         });
-
-        String[] sortingByItems = {"Hellenistic", "Necklace", "Tag20"}; //these one should be the existing tags. I will made up some for the sake of demonstration
-        for (String tags : sortingByItems) {
-            CheckMenuItem item = new CheckMenuItem(tags);
-            item.setOnAction(e -> tagSelected());  // listener for all the tags it gets triggered if one of them selected or deselected
-            sortBy.getItems().add(item);
-        }
-
     }
 
     public void darkMode() {
@@ -294,13 +339,14 @@ public class ControllerMain implements Initializable {
         }
     }
 
-    public void tagSelected() {
-        List<String> selectedTags = sortBy.getItems().stream().filter(i -> i instanceof CheckMenuItem).map(i -> (CheckMenuItem) i).filter(CheckMenuItem::isSelected).map(MenuItem::getText).collect(Collectors.toList());
 
-        ArrayList<String> selectedTagsArr = new ArrayList<>(selectedTags);   // selected elements dynamic arraylist
-        for (String cur : selectedTagsArr) {
-            System.out.println("element: " + cur);
-        }
+    public void tagSelected() {
+        List<String> selectedTags = ListByTags.getItems().stream()
+                .filter(CheckMenuItem.class::isInstance)
+                .map(CheckMenuItem.class::cast)
+                .filter(CheckMenuItem::isSelected)
+                .map(MenuItem::getText)
+                .toList();
     }
 
     public void search(ActionEvent event) {
@@ -308,7 +354,7 @@ public class ControllerMain implements Initializable {
         ObservableList<Artifact> items = myListResults.getItems();
 
         for (Artifact a : loadedList) {
-            if (a.getName().contains(currentText)) {
+            if (a.getName().toLowerCase().contains(currentText)) {
                 if (!items.contains(a)) {
                     items.add(a);
                 }
