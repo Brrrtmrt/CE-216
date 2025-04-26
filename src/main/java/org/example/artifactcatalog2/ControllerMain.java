@@ -195,10 +195,18 @@ public class ControllerMain implements Initializable {
     public void export(ActionEvent event) {
         Runnable runnable = () -> {
             if (selectedArtifacts == null || selectedArtifacts.isEmpty()) {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Select Artifacts to Export.");
+                    alert.setTitle("");
+                    alert.setHeaderText("");
+                    alert.showAndWait();
+                });
                 return;
             }
             ArrayList<Artifact> toExport = new ArrayList<>(selectedArtifacts);
             boolean flag = JSONOperations.exportJSON(toExport);
+            //TODO: REMOVE LATER
             Platform.runLater(() -> {
                 if (flag) {
                     System.out.println("Export operation completed.");
@@ -206,6 +214,7 @@ public class ControllerMain implements Initializable {
                     System.out.println("Export operation failed.");
                 }
             });
+            //
         };
         Thread thread = new Thread(runnable);
         thread.setDaemon(true);

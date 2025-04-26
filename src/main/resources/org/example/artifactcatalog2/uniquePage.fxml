@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.Button?>
 <VBox fx:id="mainLayout" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="444.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.artifactcatalog2.ControllerUnique">
    <children>
       <MenuBar>
@@ -45,5 +46,13 @@
             <ImageView fx:id="pictureArtifact" fitHeight="169.0" fitWidth="307.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </HBox>
+       <HBox alignment="BOTTOM_RIGHT" prefHeight="283.0" prefWidth="670.0">
+           <Button fx:id="editMode" mnemonicParsing="false" onAction="#edit" prefHeight="26.0" prefWidth="57.0"
+                   text="Edit Mode"/>
+           <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" prefHeight="26.0" prefWidth="57.0"
+                   text="Save"/>
+
+       </HBox>
+
    </children>
 </VBox>

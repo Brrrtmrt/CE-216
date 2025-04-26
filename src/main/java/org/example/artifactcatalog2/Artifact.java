@@ -126,6 +126,7 @@ public class Artifact {
         this.tags = tags;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -136,5 +137,22 @@ public class Artifact {
     @Override
     public int hashCode() {
         return Objects.hash(ID);
+    }
+
+    @Override
+    public String toString() {
+        return "Artifact{" +
+                "ID='" + ID + '\'' +
+                ", name='" + name + '\'' +
+                ", category='" + category + '\'' +
+                ", discoveryLocation='" + discoveryLocation + '\'' +
+                ", composition=" + composition +
+                ", civilization='" + civilization + '\'' +
+                ", discoveryDate=" + discoveryDate +
+                ", currentPlace='" + currentPlace + '\'' +
+                ", dimension=" + dimension +
+                ", weight=" + weight +
+                ", tags=" + tags +
+                '}';
     }
 }

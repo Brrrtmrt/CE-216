@@ -18,7 +18,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.Stack;
 
@@ -34,10 +37,13 @@ public class ControllerUnique implements Initializable {
     private TextArea explanationArtifact;
     @FXML
     private VBox mainLayout;
+    @FXML
+    private Button editMode;
+    @FXML
+    private Button saveButton;
 
 
-
-    public boolean isDarkModeOn(){
+    public boolean isDarkModeOn() {
         return isDarkModeOn;
     }
 
@@ -55,21 +61,57 @@ public class ControllerUnique implements Initializable {
 
     }
 
-    public void darkMode(){
+    public void edit(ActionEvent event) {
+
+        explanationArtifact.setEditable(!explanationArtifact.isEditable());
+
+    }
+
+    public boolean save(ActionEvent event) {
+        Artifact artifact;
+        String id;
+        try {
+            ArrayList<String> attr = new ArrayList<>(Arrays.stream(explanationArtifact.getText().split("\n")).toList());
+            String name = attr.get(0).split(": ")[1];
+            String category = attr.get(1).split(": ")[1];
+            String civilization = attr.get(2).split(": ")[1];
+            String discoveryLocation = attr.get(3).split(": ")[1];
+            ArrayList<String> composition = new ArrayList<>(Arrays.asList(attr.get(4).split(": ")[1].split(", ")));
+            LocalDate discoveryDate = LocalDate.parse(attr.get(5).split(": ")[1], DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            String currentPlace = attr.get(6).split(": ")[1];
+            long length = Long.parseLong(attr.get(8).split(": ")[1]);
+            long width = Long.parseLong(attr.get(9).split(": ")[1]);
+            long height = Long.parseLong(attr.get(10).split(": ")[1]);
+            long weight = Long.parseLong(attr.get(11).split(": ")[1]);
+            ArrayList<String> tags = new ArrayList<>(Arrays.asList(attr.get(12).split(": ")[1].split(", ")));
+            id = attr.get(13).split(": ")[1];
+            Dimension dimension = new Dimension(length, width, height);
+            artifact = new Artifact(id, name, category, discoveryLocation, composition, civilization, discoveryDate, currentPlace, dimension, weight, tags);
+            System.out.println("Artifact created: " + artifact.toString());
+        } catch (Exception e) {
+            System.out.println("bad text");
+            return false;
+        }
+
+        return UserOperations.createArtifact(artifact) && UserOperations.deleteArtifact(id);
+
+
+    }
+
+    public void darkMode() {
         String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
-        if(darkModeChecker.isSelected()){
+        if (darkModeChecker.isSelected()) {
             Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().add(darkModeCSS);
             isDarkModeOn = true;
-        }
-        else{
+        } else {
             Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().remove(darkModeCSS);
             isDarkModeOn = true;
         }
     }
 
-    public void selected(Artifact selectedArtifact){
+    public void selected(Artifact selectedArtifact) {
         System.out.println("selected method activated");
         titleArtifact.setText("Here is the page of the " + selectedArtifact.getName() + ":");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -94,18 +136,18 @@ public class ControllerUnique implements Initializable {
         explanationArtifact.setText(sb.toString());
     }
 
-    public void backToMain(ActionEvent e){
+    public void backToMain(ActionEvent e) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainf.fxml"));
-        try{
+        try {
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            Stage stage = (Stage) ((Node)e.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 
 
-            if(stage.isFullScreen()){
+            if (stage.isFullScreen()) {
                 stage.setFullScreen(true);
             }
-            if(stage.isMaximized()){
+            if (stage.isMaximized()) {
                 stage.setMaximized(true);
             }
 
@@ -113,7 +155,7 @@ public class ControllerUnique implements Initializable {
             stage.setScene(scene);
 
 
-        }catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
