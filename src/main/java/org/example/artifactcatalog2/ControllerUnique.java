@@ -1,5 +1,6 @@
 package org.example.artifactcatalog2;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,6 +50,18 @@ public class ControllerUnique implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Platform.runLater(() -> {
+            if (DarkModeManager.getInstance().isDarkModeOn()) {
+                String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
+                Scene sceneMain = mainLayout.getScene();
+                if (sceneMain != null) {
+                    sceneMain.getStylesheets().add(darkModeCSS);
+                }
+                darkModeChecker.setSelected(true);
+            } else {
+                darkModeChecker.setSelected(false);
+            }
+        });
         explanationArtifact.setEditable(false);
         Image image = new Image(getClass().getResource("/images/fatMalenia.png").toExternalForm());
         pictureArtifact.setImage(image);
@@ -100,14 +113,13 @@ public class ControllerUnique implements Initializable {
 
     public void darkMode() {
         String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
+        Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
         if (darkModeChecker.isSelected()) {
-            Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().add(darkModeCSS);
-            isDarkModeOn = true;
+            DarkModeManager.getInstance().setDarkModeOn(true);
         } else {
-            Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().remove(darkModeCSS);
-            isDarkModeOn = true;
+            DarkModeManager.getInstance().setDarkModeOn(false);
         }
     }
 
@@ -143,6 +155,17 @@ public class ControllerUnique implements Initializable {
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 
+            //epic fix
+            double x = stage.getX();
+            double y = stage.getY();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+
+            stage.setScene(scene);
+            stage.setX(x);
+            stage.setY(y);
+            stage.setWidth(width);
+            stage.setHeight(height);
 
             if (stage.isFullScreen()) {
                 stage.setFullScreen(true);
@@ -150,10 +173,6 @@ public class ControllerUnique implements Initializable {
             if (stage.isMaximized()) {
                 stage.setMaximized(true);
             }
-
-            stage.setMaximized(true);
-            stage.setScene(scene);
-
 
         } catch (Exception exception) {
             exception.printStackTrace();

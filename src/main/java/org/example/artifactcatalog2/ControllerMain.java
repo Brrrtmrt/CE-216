@@ -56,11 +56,11 @@ public class ControllerMain implements Initializable {
     @FXML
     private HBox lastRow;
     @FXML
+    private HBox anotherRow;
+    @FXML
     private MenuItem exportJSON;
     @FXML
     private MenuItem importJSON;
-
-
     public void refresh() {
         loadedList = JSONOperations.readExistingList();
         myListResults.getItems().addAll(loadedList);
@@ -235,15 +235,23 @@ public class ControllerMain implements Initializable {
         }
     }
 
-    public boolean isDarkModeOn() {
-        return isDarkModeOn;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         refresh(); //creates db if not
         filter.setValue("Filter");   //naming the filer
+        Platform.runLater(() -> {
+            if (DarkModeManager.getInstance().isDarkModeOn()) {
+                String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
+                Scene sceneMain = mainLayout.getScene();
+                if (sceneMain != null) {
+                    sceneMain.getStylesheets().add(darkModeCSS);
+                }
+                darkModeChecker.setSelected(true);
+            } else {
+                darkModeChecker.setSelected(false);
+            }
+        });
         HBox firsLine = new HBox();
         firsLine.setAlignment(Pos.CENTER);
 
@@ -252,12 +260,6 @@ public class ControllerMain implements Initializable {
         ListByTags.setOnMouseClicked(this::tags);
         tags(null);
 
-
-
-
-       /* String[] forTest = {"aasd", "asdas", "dfdf", "szfsdfds"};
-        myListResults.getItems().addAll(forTest);
-*/
         Button bttnSearch = new Button("Search");
         bttnSearch.setOnAction(event -> search(event));
         lastRow.getChildren().add(bttnSearch);
@@ -300,14 +302,13 @@ public class ControllerMain implements Initializable {
 
     public void darkMode() {
         String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
+        Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
         if (darkModeChecker.isSelected()) {
-            Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().add(darkModeCSS);
-            isDarkModeOn = true;
+            DarkModeManager.getInstance().setDarkModeOn(true);
         } else {
-            Scene sceneMain = darkModeChecker.getParentPopup().getOwnerWindow().getScene();
             sceneMain.getStylesheets().remove(darkModeCSS);
-            isDarkModeOn = true;
+            DarkModeManager.getInstance().setDarkModeOn(false);
         }
     }
 

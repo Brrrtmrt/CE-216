@@ -150,7 +150,7 @@ public class Artifact {
                 ", civilization='" + civilization + '\'' +
                 ", discoveryDate=" + discoveryDate +
                 ", currentPlace='" + currentPlace + '\'' +
-                ", dimension=" + dimension +
+                ", dimension=" + dimension.toString() +
                 ", weight=" + weight +
                 ", tags=" + tags +
                 '}';

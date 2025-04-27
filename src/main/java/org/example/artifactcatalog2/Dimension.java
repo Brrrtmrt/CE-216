@@ -40,4 +40,12 @@ public class Dimension {
         this.height = height;
     }
 
+    @Override
+    public String toString() {
+        return "Dimension{" +
+                "width=" + width +
+                ", length=" + length +
+                ", height=" + height +
+                '}';
+    }
 }

@@ -50,7 +50,7 @@ public class JSONOperations {
             if (!flag) {
                 return false;
             }
-            return writeJSON(databasePath, new ArrayList<>(artifactSet));
+            return writeJSON(databasePath, new ArrayList<>(artifactSet)); //TODO: nocheckwritejson?
         } finally {
             lock.writeLock().unlock();
         }
