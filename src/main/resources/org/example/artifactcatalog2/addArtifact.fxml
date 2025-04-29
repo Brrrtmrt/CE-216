@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10.0" alignment="CENTER" xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.artifactcatalog2.ControllerAdd">
+
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <Label text="Add New Artifact"/>
+
+    <TextField fx:id="inputID" promptText="Unique ID"/>
+    <TextField fx:id="inputName" promptText="Name"/>
+    <TextField fx:id="inputCategory" promptText="Category"/>
+    <TextField fx:id="inputCivilization" promptText="Civilization"/>
+    <TextField fx:id="inputDiscoveryLocation" promptText="Discovery Location"/>
+    <DatePicker fx:id="inputDiscoveryDate"/>
+
+    <TextField fx:id="inputCurrentPlace" promptText="Current Place"/>
+    <TextField fx:id="inputComposition" promptText="Composition (comma-separated)"/>
+    <TextField fx:id="inputTags" promptText="Tags (comma-separated)"/>
+
+    <TextField fx:id="inputLength" promptText="Length"/>
+    <TextField fx:id="inputWidth" promptText="Width"/>
+    <TextField fx:id="inputHeight" promptText="Height"/>
+    <TextField fx:id="inputWeight" promptText="Weight"/>
+
+    <HBox spacing="10">
+        <Button fx:id="btnSelectImage" text="Select Image" onAction="#selectImage"/>
+        <Label fx:id="labelImagePath" text="No image selected"/>
+    </HBox>
+
+    <Button fx:id="btnAdd" text="Add Artifact" onAction="#addArtifact"/>
+
+</VBox>

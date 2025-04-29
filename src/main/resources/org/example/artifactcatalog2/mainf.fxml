@@ -55,12 +55,13 @@
          <children>
             <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="375.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="selectButton" mnemonicParsing="false" onAction="#goPage" prefHeight="25.0" prefWidth="84.0" text="Go Its Page" />
-
-
-             <MenuButton fx:id="ListByTags" mnemonicParsing="false" onMouseClicked="#tags" text="List By Tag"/>
+            <MenuButton fx:id="ListByTags" mnemonicParsing="false" onMouseClicked="#tags" text="List By Tag"/>
             <ChoiceBox fx:id="filter" prefHeight="25.0" prefWidth="57.0" />
          </children>
       </HBox>
+      <Button fx:id="addArtifactButton" mnemonicParsing="false" onAction="#openAddArtifact"
+              text="Add Artifact" prefHeight="30.0" prefWidth="150.0"/>
+
       <ListView fx:id="myListResults" prefHeight="268.0" prefWidth="597.0" />
    </children>
 </VBox>
