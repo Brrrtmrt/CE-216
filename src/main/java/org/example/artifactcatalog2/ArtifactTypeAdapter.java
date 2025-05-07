@@ -32,6 +32,7 @@ public class ArtifactTypeAdapter extends TypeAdapter<Artifact> {
         dimensionTypeAdapter.write(out, artifact.getDimension());
         out.name("weight").value(artifact.getWeight());
         out.name("tags").jsonValue(new Gson().toJson(artifact.getTags()));
+        out.name("imagePath").value(artifact.getImagePath());
         out.endObject();
     }
 
