@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Artifact {
 
-    public Artifact(String ID, String name, String category, String discoveryLocation, ArrayList<String> composition, String civilization, LocalDate discoveryDate, String currentPlace, Dimension dimension, long weight, ArrayList<String> tags) {
+    public Artifact(String ID, String name, String category, String discoveryLocation, ArrayList<String> composition, String civilization, LocalDate discoveryDate, String currentPlace, Dimension dimension, long weight, ArrayList<String> tags, String imagePath) {
         this.ID = ID;
         this.name = name;
         this.category = category;
@@ -19,11 +19,11 @@ public class Artifact {
         this.dimension = dimension;
         this.weight = weight;
         this.tags = tags;
+        this.imagePath=imagePath;
     }
 
     public Artifact() {
     }
-
 
     private String ID;
     private String name;
@@ -36,6 +36,7 @@ public class Artifact {
     private Dimension dimension;
     private long weight;
     private ArrayList<String> tags;
+    private String imagePath;
 
     public String getID() {
         return ID;
@@ -126,6 +127,13 @@ public class Artifact {
         this.tags = tags;
     }
 
+    public String getImagePath(){
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath){
+        this.imagePath = imagePath;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -153,6 +161,7 @@ public class Artifact {
                 ", dimension=" + dimension.toString() +
                 ", weight=" + weight +
                 ", tags=" + tags +
+                ", imagePath=" + imagePath + '\'' +
                 '}';
     }
 }

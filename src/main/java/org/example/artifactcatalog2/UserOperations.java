@@ -1,15 +1,19 @@
 package org.example.artifactcatalog2;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class UserOperations {
     
     public static  boolean createArtifact(Artifact artifact){
         ArrayList<Artifact> currentList= JSONOperations.readExistingList();
         currentList.add(artifact);
-        return JSONOperations.noCheckWriteJSON(JSONOperations.getDb(), currentList);
+        return JSONOperations.noCheckWriteJSON(JSONOperations.getDb(), currentList);        
     }
 
     public static boolean editArtifact(String ID, Artifact editedArtifact){
@@ -23,37 +27,45 @@ public class UserOperations {
         return false;
     }
 
-    public static boolean deleteArtifact(String ID){
-        ArrayList<Artifact> artifacts= JSONOperations.readExistingList();
-        int indexToRemove = -1;
-        for (int i = 0; i < artifacts.size(); i++) {
-            if (artifacts.get(i).getID().equals(ID)) { //equals is overridden so used like this
-            indexToRemove = i;
-            break;
+    public static boolean deleteArtifact(String id) {
+        ArrayList<Artifact> currentList = JSONOperations.readExistingList();
+        boolean removed = false;
+        Iterator<Artifact> iterator = currentList.iterator();
+        while (iterator.hasNext()) {
+            Artifact artifact = iterator.next();
+            if (artifact.getID().equals(id)) {
+                String relativePath = artifact.getImagePath();
+                if (relativePath != null && !relativePath.isBlank()) {
+                    Path imagePath = Paths.get(System.getProperty("user.dir")).resolve(relativePath);
+                    try {
+                        boolean deleted = Files.deleteIfExists(imagePath);
+                    } catch (IOException e) {
+                    }
+                }
+                iterator.remove();
+                removed = true;
+                break;
             }
         }
-
-        if (indexToRemove != -1) {
-            artifacts.remove(indexToRemove);
-            return JSONOperations.noCheckWriteJSON(JSONOperations.getDb(), artifacts); //no check because list is completely new
+        if (removed) {
+            boolean writeSuccess = JSONOperations.noCheckWriteJSON(JSONOperations.getDb(), currentList);
+            return writeSuccess;
         } else {
             return false;
         }
     }
-
-    public static boolean deleteArtifacts(ArrayList<Artifact> artifacts) {
-        ArrayList<Artifact> currentList = JSONOperations.readExistingList();
+    
+    public static boolean deleteArtifacts(List<Artifact> artifacts) {
+        boolean allDeleted = true;
         for (Artifact artifact : artifacts) {
-            currentList.remove(artifact);
+            boolean result = deleteArtifact(artifact.getID());
+            if (!result) {
+                allDeleted = false;
+            }
         }
-        return JSONOperations.noCheckWriteJSON(JSONOperations.getDb(), currentList);
-
-
+        return allDeleted;
     }
-
-    public static List<Artifact> list() {
-        return JSONOperations.readExistingList();
-    }
+    
 
     public static void main(String[] args) {
        /* ArrayList<Artifact> list = JSONOperations.readExistingList();

@@ -61,9 +61,14 @@ public class ControllerMain implements Initializable {
     private MenuItem exportJSON;
     @FXML
     private MenuItem importJSON;
+    
+    public void addArtifactToList(Artifact artifact) {
+        myListResults.getItems().add(artifact);
+    }
+
     public void refresh() {
         loadedList = JSONOperations.readExistingList();
-        myListResults.getItems().addAll(loadedList);
+        myListResults.getItems().setAll(loadedList);
     }
 
     public void tags(MouseEvent event) {

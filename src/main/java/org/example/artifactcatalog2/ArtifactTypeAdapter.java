@@ -78,6 +78,9 @@ public class ArtifactTypeAdapter extends TypeAdapter<Artifact> {
                     }.getType());
                     artifact.setTags(tagsList);
                     break;
+                case "imagePath":
+                    artifact.setImagePath(in.nextString());
+                    break;
             }
         }
         in.endObject();
