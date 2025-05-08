@@ -68,6 +68,7 @@ public class ControllerUnique implements Initializable {
                 darkModeChecker.setSelected(false);
             }
         });
+
         explanationArtifact.setEditable(false);
         //creating button to turn back to main page
         Button buttonBack = new Button("Back to Main Page");
@@ -101,8 +102,9 @@ public class ControllerUnique implements Initializable {
             long weight = Long.parseLong(attr.get(11).split(": ")[1]);
             ArrayList<String> tags = new ArrayList<>(Arrays.asList(attr.get(12).split(": ")[1].split(", ")));
             id = attr.get(13).split(": ")[1];
+            String imagePath = attr.get(14).split(": ")[1];
             Dimension dimension = new Dimension(length, width, height);
-            artifact = new Artifact(id, name, category, discoveryLocation, composition, civilization, discoveryDate, currentPlace, dimension, weight, tags, selectedArtifact.getImagePath());
+            artifact = new Artifact(id, name, category, discoveryLocation, composition, civilization, discoveryDate, currentPlace, dimension, weight, tags, imagePath);
             System.out.println("Artifact created in save(): " + artifact.getID());
         } catch (Exception e) {
             System.out.println("bad text");
@@ -146,8 +148,10 @@ public class ControllerUnique implements Initializable {
         sb.append("Height: ").append(selectedArtifact.getDimension().getHeight()).append("\n");
         sb.append("Weight: ").append(selectedArtifact.getWeight()).append("\n");
         sb.append("Tags: ").append(String.join(", ", selectedArtifact.getTags())).append("\n");
-        sb.append("Unique Identifier: ").append(selectedArtifact.getID());
+        sb.append("Unique Identifier: ").append(selectedArtifact.getID()).append("\n");
+        sb.append("Image Path: ").append(selectedArtifact.getImagePath()).append("\n");
         explanationArtifact.setText(sb.toString());
+
 
         try {
             String imagePath = selectedArtifact.getImagePath();
