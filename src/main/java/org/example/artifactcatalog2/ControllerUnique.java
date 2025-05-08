@@ -10,8 +10,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -67,15 +69,12 @@ public class ControllerUnique implements Initializable {
             }
         });
         explanationArtifact.setEditable(false);
-        Image image = new Image(getClass().getResource("/images/fatMalenia.png").toExternalForm());
-        pictureArtifact.setImage(image);
-
         //creating button to turn back to main page
         Button buttonBack = new Button("Back to Main Page");
         buttonBack.setOnAction(event -> backToMain(event));
         buttonBack.setAlignment(Pos.CENTER);
         mainLayout.getChildren().add(buttonBack);
-
+        ControllerMain.getInstance().updateListViewCells();
     }
 
     public void edit(ActionEvent event) {

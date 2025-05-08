@@ -79,6 +79,7 @@ public class ControllerMain implements Initializable {
     public void refresh() {
         loadedList = JSONOperations.readExistingList();
         myListResults.getItems().setAll(loadedList);
+        ControllerMain.getInstance().updateListViewCells();
     }
 
     public void tags(MouseEvent event) {
@@ -404,5 +405,33 @@ public class ControllerMain implements Initializable {
             e.printStackTrace();
         }
     }   
+
+    public void updateListViewCells() {
+        myListResults.setCellFactory(listView -> new ListCell<>() {
+        private final CheckBox checkBox = new CheckBox();
+
+        @Override
+        protected void updateItem(Artifact artifact, boolean empty) {
+            super.updateItem(artifact, empty);
+            if (empty || artifact == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                checkBox.setText(artifact.getID() + "\n" + artifact.getName());
+                checkBox.setSelected(selectedArtifacts.contains(artifact));
+                checkBox.setOnAction(event -> {
+                    if (checkBox.isSelected()) {
+                        selectedArtifacts.add(artifact);
+                        System.out.println("[DEBUG] Artifact added: " + artifact.getID());
+                    } else {
+                        selectedArtifacts.remove(artifact);
+                        System.out.println("[DEBUG] Artifact removed: " + artifact.getID());
+                    }
+                });
+                setGraphic(checkBox);
+            }
+            }
+        });
+    }
 
 }
