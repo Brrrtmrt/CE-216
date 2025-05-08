@@ -61,6 +61,16 @@ public class ControllerMain implements Initializable {
     private MenuItem exportJSON;
     @FXML
     private MenuItem importJSON;
+    private static ControllerMain instance;
+
+    public ControllerMain() {
+        instance = this;
+    }
+
+    public static ControllerMain getInstance() {
+        return instance;
+    }
+
     
     public void addArtifactToList(Artifact artifact) {
         myListResults.getItems().add(artifact);
