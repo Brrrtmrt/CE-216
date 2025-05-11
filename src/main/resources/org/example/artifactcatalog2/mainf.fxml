@@ -33,9 +33,9 @@
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="User Manual" />
-                    </items>
+                     <items>
+                        <MenuItem fx:id="userManualMenuItem" mnemonicParsing="false" text="User Manual" onAction="#showUserManual"/>
+                     </items>
                   </Menu>
                </menus>
             </MenuBar>
@@ -61,7 +61,6 @@
       </HBox>
       <Button fx:id="addArtifactButton" mnemonicParsing="false" onAction="#openAddArtifact"
               text="Add Artifact" prefHeight="30.0" prefWidth="150.0"/>
-
       <ListView fx:id="myListResults" prefHeight="268.0" prefWidth="597.0" />
    </children>
 </VBox>

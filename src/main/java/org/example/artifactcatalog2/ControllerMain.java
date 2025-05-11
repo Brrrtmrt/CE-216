@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -20,7 +21,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -434,4 +439,37 @@ public class ControllerMain implements Initializable {
         });
     }
 
+    public void showUserManual(ActionEvent event) {
+        try {
+            String resourcePath = "/org/example/artifactcatalog2/user_manual.txt";
+            URL resourceURL = getClass().getResource(resourcePath);
+            InputStream is = getClass().getResourceAsStream(resourcePath);
+            if (is == null) {
+                throw new FileNotFoundException("User manual not found at: " + resourcePath);
+            }
+            String manualText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            TextArea textArea = new TextArea(manualText);
+            textArea.setWrapText(true);
+            textArea.setEditable(false);
+            textArea.setPrefWidth(600);
+            textArea.setPrefHeight(600);
+            VBox root = new VBox(textArea);
+            root.setPrefWidth(600);
+            root.setPrefHeight(600);
+            root.setPadding(new Insets(10));
+            Scene scene = new Scene(root, 600, 600);
+            if (DarkModeManager.getInstance().isDarkModeOn()) {
+                String darkCSS = getClass().getResource("DarkMode.css").toExternalForm();
+                scene.getStylesheets().add(darkCSS);
+            }
+            Stage stage = new Stage();
+            stage.setTitle("User Manual");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Could not load the user manual.");
+            alert.showAndWait();
+        }
+    }
 }

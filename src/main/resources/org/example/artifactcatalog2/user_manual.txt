@@ -1,0 +1,87 @@
+Artifact Catalog 2 - User Manual
+===============================
+
+Overview
+--------
+Artifact Catalog 2 is a desktop JavaFX application for cataloging historical artifacts. 
+It allows users to add, edit, view, filter, import, export, and delete artifacts, with optional image and tag support.
+
+Getting Started
+----------------------
+
+Launching the App:
+1. Double-click the ArtifactCatalog2.jar OR run via command line:
+   java -jar ArtifactCatalog2.jar
+
+Main Interface Overview:
+- Search Bar: Search artifacts by name.
+- "Add Artifact" button: Opens a form to add a new artifact.
+- "Go Its Page": Opens the detailed page of the selected artifact.
+- "Delete" button: Deletes selected artifacts.
+- "List by Tag": Filter the list based on tags.
+- "Dark Mode": Switch between light and dark themes.
+- "Export JSON": Export selected artifacts.
+- "Import JSON": Import artifacts from a JSON file.
+
+Adding an Artifact
+----------------------
+
+Steps:
+1. Click "Add Artifact".
+2. Fill in all required fields: ID, Name, Category, etc.
+3. Use "Select Image" to attach an image.
+4. Click "Add" to save the artifact.
+
+Viewing & Editing
+----------------------
+
+1. Select an artifact and click "Go Its Page".
+2. A detailed view will appear.
+3. Click "Edit" to make text editable.
+4. Modify the content and click "Save".
+
+Saving replaces the old artifact with the new edited version.
+
+Exporting & Importing
+----------------------
+
+Export:
+- Select one or more artifacts.
+- Click "Export JSON".
+- File is saved in the application directory (e.g., Export_11-05-2025.json).
+
+Import:
+- Click "Import JSON".
+- Choose a .json file.
+- New artifacts will be added (duplicates are ignored based on ID).
+
+Dark Mode
+----------------------
+
+Toggle from "Settings > Dark Mode".
+The setting is preserved while the application runs.
+User Manual and Unique Page also respond to this setting.
+
+Image Handling
+----------------------
+
+- Images are saved in 'out/images' folder.
+- Deleting an artifact also removes its image.
+- When importing, image paths must be valid relative to the project.
+
+Troubleshooting
+----------------------
+
+Problem: App doesn’t open
+Solution: Ensure Java 17+ is installed and JavaFX is configured.
+
+Problem: Cannot add artifact
+Solution: Check for empty fields or duplicate ID.
+
+Problem: Image doesn’t show
+Solution: Check if the image exists in 'out/images/' and has a valid path.
+
+
+
+Developed for CE 216 Course
+
