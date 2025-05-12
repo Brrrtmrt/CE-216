@@ -2,4 +2,4 @@
 Data.json
 .idea
 /out
-.class
+*.class
