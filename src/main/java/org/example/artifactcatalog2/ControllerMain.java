@@ -282,12 +282,7 @@ public class ControllerMain implements Initializable {
         ListByTags.setOnMouseClicked(this::tags);
         tags(null);
 
-        Button bttnSearch = new Button("Search");
-        lastRow.getChildren().add(bttnSearch);
-
-        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
-            search(newValue);
-        });
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> search(newValue));
 
         myListResults.setCellFactory(listView -> new ListCell<>() {
             private final CheckBox checkBox = new CheckBox();
