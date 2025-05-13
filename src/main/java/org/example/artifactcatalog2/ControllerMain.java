@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -282,14 +283,10 @@ public class ControllerMain implements Initializable {
         tags(null);
 
         Button bttnSearch = new Button("Search");
-        bttnSearch.setOnAction(event -> search(event));
         lastRow.getChildren().add(bttnSearch);
 
-        searchBar.setOnKeyPressed(keyEvent -> {       //search func also works with button presses
-            if (keyEvent.getCode() == KeyCode.ENTER) {
-                ActionEvent actionEvent = new ActionEvent(searchBar, null);
-                this.search(actionEvent);
-            }
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+            search(newValue);
         });
 
         myListResults.setCellFactory(listView -> new ListCell<>() {
@@ -380,19 +377,55 @@ public class ControllerMain implements Initializable {
                 .toList();
     }
 
-    public void search(ActionEvent event) {
-        String currentText = searchBar.getText();
+    private boolean bulkContains(String[] list, String target) {
+        for (String item : list) {
+            if (item == null) continue;
+            if (item.toLowerCase().contains(target.toLowerCase())) return true;
+        }
+
+        return false;
+    }
+
+    public void search(String currentText) {
         ObservableList<Artifact> items = myListResults.getItems();
 
-        for (Artifact a : loadedList) {
-            if (a.getName().toLowerCase().contains(currentText)) {
-                if (!items.contains(a)) {
-                    items.add(a);
-                }
+        for (Artifact artifact : loadedList) {
+            LocalDate date = artifact.getDiscoveryDate();
+
+            String dateAsString = (date == null) ? null : date.toString();
+
+            Dimension dimension = artifact.getDimension();
+
+            ArrayList<String> composition = artifact.getComposition();
+            ArrayList<String> tags = artifact.getTags();
+
+            String[] list = {
+                    artifact.getName(),
+                    artifact.getID(),
+                    artifact.getCategory(),
+                    artifact.getDiscoveryLocation(),
+                    artifact.getCivilization(),
+                    dateAsString,
+                    artifact.getCurrentPlace(),
+                    (dimension == null) ? null : String.valueOf(dimension.getWidth()),
+                    (dimension == null) ? null : String.valueOf(dimension.getLength()),
+                    (dimension == null) ? null : String.valueOf(dimension.getHeight()),
+                    String.valueOf(artifact.getWeight()),
+                    artifact.getImagePath(),
+            };
+
+            if (composition != null) {
+                list = composition.toArray(list);
+            }
+
+            if (tags != null) {
+                list = tags.toArray(list);
+            }
+
+            if (bulkContains(list, currentText)) {
+                if (!items.contains(artifact)) items.add(artifact);
             } else {
-                if (items.contains(a)) {
-                    items.remove(a);
-                }
+                items.remove(artifact);
             }
         }
     }
