@@ -404,7 +404,14 @@ public class ControllerMain implements Initializable {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Add Artifact");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+
+            // Apply dark mode if enabled
+            if (DarkModeManager.getInstance().isDarkModeOn()) {
+                String darkModeCSS = getClass().getResource("DarkMode.css").toExternalForm();
+                scene.getStylesheets().add(darkModeCSS);
+            }
+            stage.setScene(scene);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
