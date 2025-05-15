@@ -3,3 +3,4 @@ Data.json
 .idea
 /out
 *.class
+/src/main/resources/META-INF/MANIFEST.MF

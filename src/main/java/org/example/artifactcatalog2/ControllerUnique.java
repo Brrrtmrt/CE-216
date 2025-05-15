@@ -58,8 +58,10 @@ public class ControllerUnique implements Initializable {
                 if (sceneMain != null) {
                     sceneMain.getStylesheets().add(darkModeCSS);
                 }
+                if (darkModeChecker == null) return;
                 darkModeChecker.setSelected(true);
             } else {
+                if (darkModeChecker == null) return;
                 darkModeChecker.setSelected(false);
             }
         });
@@ -67,7 +69,10 @@ public class ControllerUnique implements Initializable {
         explanationArtifact.setEditable(false);
         //creating button to turn back to main page
         Button buttonBack = new Button("Back to Main Page");
-        buttonBack.setOnAction(event -> backToMain(event));
+        buttonBack.setOnAction(event -> {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.close();
+        });
         buttonBack.setAlignment(Pos.CENTER);
         mainLayout.getChildren().add(buttonBack);
         ControllerMain.getInstance().updateListViewCells();
@@ -167,36 +172,5 @@ public class ControllerUnique implements Initializable {
             System.out.println("Error loading image: " + e.getMessage());
             pictureArtifact.setImage(null);
         }        
-    }
-    
-    public void backToMain(ActionEvent e) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainf.fxml"));
-        try {
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-
-            //epic fix
-            double x = stage.getX();
-            double y = stage.getY();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            stage.setScene(scene);
-            stage.setX(x);
-            stage.setY(y);
-            stage.setWidth(width);
-            stage.setHeight(height);
-
-            if (stage.isFullScreen()) {
-                stage.setFullScreen(true);
-            }
-            if (stage.isMaximized()) {
-                stage.setMaximized(true);
-            }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
     }
 }

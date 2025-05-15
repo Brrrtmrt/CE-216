@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -307,6 +309,14 @@ public class ControllerMain implements Initializable {
                 }
             }
         });
+
+        myListResults.setOnMouseClicked(click -> {
+
+            if (click.getClickCount() == 2) {
+                Artifact currentItemSelected = myListResults.getSelectionModel().getSelectedItem();
+                goPage(click, currentItemSelected);
+            }
+        });
     }
 
     public void darkMode() {
@@ -321,43 +331,40 @@ public class ControllerMain implements Initializable {
         }
     }
 
-    public void goPage(ActionEvent event) {
-        //method that gets activated when user press search button
-        if (selectedArtifacts.size() != 1) {
-            System.out.println("You have to select 1 element to view its page!");
-            return;
-        } else {
-            try {
+    public void goPage(MouseEvent event, Artifact artifact) {
+        try {
+            Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("uniquePage.fxml"));
+            Parent root = loader.load();
+            ControllerUnique unique = loader.getController();
 
+            Platform.runLater(() -> unique.selected(artifact));
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("uniquePage.fxml"));
+            Stage stage = new Stage();
+            stage.initOwner(primaryStage);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Details of " + artifact.getName());
+            Scene scene = new Scene(root);
 
+            boolean isFull = stage.isFullScreen();
+            boolean isMax = stage.isMaximized();
 
-                Parent root = loader.load();
-                ControllerUnique unique = loader.getController();
+            stage.setScene(scene);
 
-                //unique.selected(selectedArtifacts.getFirst());
-                Platform.runLater(() -> unique.selected(selectedArtifacts.getFirst()));
+            Platform.runLater(() -> {
+                stage.setFullScreen(isFull);
+                stage.setMaximized(isMax);
+            });
 
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                Scene scene = new Scene(root);
+            stage.setOnHidden(e -> {
+                ControllerMain.getInstance().refresh(); // Call your desired method
+            });
 
-                boolean isFull = stage.isFullScreen();
-                boolean isMax = stage.isMaximized();
-
-                stage.setScene(scene);
-
-                Platform.runLater(() -> {   //IDK WHY IT RESETS THE FULLSCREEN OR MAX SCREEN
-                    stage.setFullScreen(isFull);
-                    stage.setMaximized(isMax);
-                });
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            stage.show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
-
 
     public void tagSelected() {
         List<String> selectedTags = ListByTags.getItems().stream()
