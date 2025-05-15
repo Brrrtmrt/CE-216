@@ -4,18 +4,13 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.nio.file.Files;
 
 public class UIMain extends Application {
     public static void main(String[] args) {
         launch(args);
     }
     public void start(Stage mainStage) throws Exception{
-        ;
         FXMLLoader loaderMain = new FXMLLoader(getClass().getResource("mainf.fxml"));
         Parent root = loaderMain.load();
         //Image appIcon = new Image(getClass().getResourceAsStream("/images/ms.jpg"));

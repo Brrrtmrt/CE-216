@@ -13,7 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -35,8 +34,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ControllerMain implements Initializable {
-    @FXML
-    private ChoiceBox<String> filter;   //filter choice box
     @FXML
     private Label mainLabel;
     @FXML
@@ -261,7 +258,6 @@ public class ControllerMain implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         refresh(); //creates db if not
-        filter.setValue("Filter");   //naming the filer
         Platform.runLater(() -> {
             if (DarkModeManager.getInstance().isDarkModeOn()) {
                 String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
@@ -475,10 +471,10 @@ public class ControllerMain implements Initializable {
     }
 
     public void showUserManual(ActionEvent event) {
-        try {
-            String resourcePath = "/org/example/artifactcatalog2/user_manual.txt";
+        String resourcePath = "/org/example/artifactcatalog2/user_manual.txt";
+
+        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
             URL resourceURL = getClass().getResource(resourcePath);
-            InputStream is = getClass().getResourceAsStream(resourcePath);
             if (is == null) {
                 throw new FileNotFoundException("User manual not found at: " + resourcePath);
             }

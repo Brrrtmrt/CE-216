@@ -40,6 +40,7 @@ public class UserOperations {
                     try {
                         boolean deleted = Files.deleteIfExists(imagePath);
                     } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
                 iterator.remove();

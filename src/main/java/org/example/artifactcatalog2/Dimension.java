@@ -1,7 +1,5 @@
 package org.example.artifactcatalog2;
 
-import java.util.Objects;
-
 public class Dimension {
     private long width;
     private long length;
