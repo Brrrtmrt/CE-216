@@ -54,6 +54,7 @@
       <HBox fx:id="lastRow" prefHeight="0.0" prefWidth="597.0" VBox.vgrow="ALWAYS">
          <children>
             <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="375.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="selectButton" mnemonicParsing="false" onAction="#goPage" prefHeight="25.0" prefWidth="84.0" text="Go Its Page" />
             <MenuButton fx:id="ListByTags" mnemonicParsing="false" onMouseClicked="#tags" text="List By Tag"/>
          </children>
       </HBox>

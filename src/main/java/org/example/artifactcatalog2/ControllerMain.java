@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -331,7 +332,14 @@ public class ControllerMain implements Initializable {
         }
     }
 
-    public void goPage(MouseEvent event, Artifact artifact) {
+    public void goPage(ActionEvent actionEvent) {
+        Artifact currentItemSelected = myListResults.getSelectionModel().getSelectedItem();
+        if (currentItemSelected != null) {
+            goPage(actionEvent, currentItemSelected);
+        }
+    }
+
+    public void goPage(Event event, Artifact artifact) {
         try {
             Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("uniquePage.fxml"));

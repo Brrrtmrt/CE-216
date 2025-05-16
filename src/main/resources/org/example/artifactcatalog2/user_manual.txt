@@ -16,6 +16,7 @@ Launching the App:
 Main Interface Overview:
 - Search Bar: Search artifacts by name.
 - "Add Artifact" button: Opens a form to add a new artifact.
+- "Go Its Page": Opens the detailed page of the selected artifact.
 - "Delete" button: Deletes selected artifacts.
 - "List by Tag": Filter the list based on tags.
 - "Dark Mode": Switch between light and dark themes.
@@ -34,7 +35,7 @@ Steps:
 Viewing & Editing
 ----------------------
 
-1. Select an artifact and double-click on it.
+1. Select an artifact and double-click on it or click "Go Its Page".
 2. A detailed view will appear.
 3. Click "Edit" to make text editable.
 4. Modify the content and click "Save".
