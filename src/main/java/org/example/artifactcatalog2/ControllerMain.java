@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -405,7 +406,7 @@ public class ControllerMain implements Initializable {
             ArrayList<String> composition = artifact.getComposition();
             ArrayList<String> tags = artifact.getTags();
 
-            String[] list = {
+            List<String> list = new ArrayList<>(Arrays.asList(
                     artifact.getName(),
                     artifact.getID(),
                     artifact.getCategory(),
@@ -417,18 +418,18 @@ public class ControllerMain implements Initializable {
                     (dimension == null) ? null : String.valueOf(dimension.getLength()),
                     (dimension == null) ? null : String.valueOf(dimension.getHeight()),
                     String.valueOf(artifact.getWeight()),
-                    artifact.getImagePath(),
-            };
+                    artifact.getImagePath()
+            ));
 
             if (composition != null) {
-                list = composition.toArray(list);
+                list.addAll(composition);
             }
 
             if (tags != null) {
-                list = tags.toArray(list);
+                list.addAll(tags);
             }
 
-            if (bulkContains(list, currentText)) {
+            if (bulkContains(list.toArray(new String[0]), currentText)) {
                 if (!items.contains(artifact)) items.add(artifact);
             } else {
                 items.remove(artifact);
