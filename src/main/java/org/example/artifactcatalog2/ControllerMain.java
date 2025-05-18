@@ -81,6 +81,11 @@ public class ControllerMain implements Initializable {
     
     public void addArtifactToList(Artifact artifact) {
         myListResults.getItems().add(artifact);
+        if (loadedList == null) {
+            loadedList = new ArrayList<>();
+        }
+        loadedList.add(artifact);
+        tags(null);
     }
 
     public void refresh() {
@@ -95,11 +100,7 @@ public class ControllerMain implements Initializable {
             System.out.println("Loaded list is empty or null.");
             return;
         }
-
-        if (!ListByTags.getItems().isEmpty()) {
-            return;
-        }
-
+        
         List<String> uniqueTags = loadedList.stream()
                 .flatMap(artifact -> artifact.getTags().stream())
                 .distinct().sorted()
