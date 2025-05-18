@@ -20,6 +20,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -110,12 +113,12 @@ public class ControllerUnique implements Initializable {
             System.out.println("bad text");
             return false;
         }
-    
+
         boolean deleted = UserOperations.deleteArtifact(id);
         boolean created = UserOperations.createArtifact(artifact);
         System.out.println("deleted: " + deleted + ", created: " + created);
         return deleted && created;
-    }    
+    }
 
     public void darkMode() {
         String darkModeCSS = this.getClass().getResource("DarkMode.css").toExternalForm();
@@ -156,21 +159,23 @@ public class ControllerUnique implements Initializable {
         try {
             String imagePath = selectedArtifact.getImagePath();
             if (imagePath != null && !imagePath.isBlank()) {
-                File imageFile = new File(imagePath);  // imagePath artık "out/images/filename.png" gibi bir path
+                imagePath = imagePath.trim();
+                if (imagePath.startsWith("\"") && imagePath.endsWith("\"")) {
+                    imagePath = imagePath.substring(1, imagePath.length() - 1);
+                }
+                File imageFile = new File(imagePath);
                 if (imageFile.exists()) {
                     byte[] imageBytes = java.nio.file.Files.readAllBytes(imageFile.toPath());
                     Image image = new Image(new java.io.ByteArrayInputStream(imageBytes));
                     pictureArtifact.setImage(image);
                 } else {
-                    System.out.println("Image file not found at path: " + imagePath);
                     pictureArtifact.setImage(null);
                 }
             } else {
                 pictureArtifact.setImage(null);
             }
         } catch (Exception e) {
-            System.out.println("Error loading image: " + e.getMessage());
             pictureArtifact.setImage(null);
-        }        
+        }
     }
 }
