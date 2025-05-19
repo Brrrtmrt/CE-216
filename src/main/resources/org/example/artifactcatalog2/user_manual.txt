@@ -6,9 +6,14 @@ Overview
 Artifact Catalog 2 is a desktop JavaFX application for cataloging historical artifacts. 
 It allows users to add, edit, view, filter, import, export, and delete artifacts, with optional image and tag support.
 
+Dependencies
+------------
+Java JDK 17 or higher
+JavaFX SDK 21+
+Gson(Google's JSON library)
+
 Getting Started
 ----------------------
-
 Launching the App:
 1. Double-click the ArtifactCatalog2.jar OR run via command line:
    java -jar ArtifactCatalog2.jar
@@ -16,16 +21,19 @@ Launching the App:
 Main Interface Overview:
 - Search Bar: Search artifacts by name.
 - "Add Artifact" button: Opens a form to add a new artifact.
-- "Go Its Page": Opens the detailed page of the selected artifact.
+- "Go Its Page" button: Opens the detailed page of the selected artifact.
 - "Delete" button: Deletes selected artifacts.
-- "List by Tag": Filter the list based on tags.
-- "Dark Mode": Switch between light and dark themes.
-- "Export JSON": Export selected artifacts.
-- "Import JSON": Import artifacts from a JSON file.
+- "List by Tag" button: Filter the list based on tags.
+- "Dark Mode" button: Switch between light and dark themes.
+- "Export JSON" button: Export selected artifacts.
+- "Import JSON" button: Import artifacts from a JSON file.
+
+Bonus Features
+--------------
+You can open go to an artifact's page with double clicking instead of using the "Go Its Page" button.
 
 Adding an Artifact
 ----------------------
-
 Steps:
 1. Click "Add Artifact".
 2. Fill in all required fields: ID, Name, Category, etc.
@@ -34,7 +42,6 @@ Steps:
 
 Viewing & Editing
 ----------------------
-
 1. Select an artifact and double-click on it or click "Go Its Page".
 2. A detailed view will appear.
 3. Click "Edit" to make text editable.
@@ -44,7 +51,6 @@ Saving replaces the old artifact with the new edited version.
 
 Exporting & Importing
 ----------------------
-
 Export:
 - Select one or more artifacts.
 - Click "Export JSON".
@@ -57,21 +63,18 @@ Import:
 
 Dark Mode
 ----------------------
-
 Toggle from "Settings > Dark Mode".
 The setting is preserved while the application runs.
 User Manual and Unique Page also respond to this setting.
 
 Image Handling
 ----------------------
-
 - Images are saved in 'out/images' folder.
 - Deleting an artifact also removes its image.
 - When importing, image paths must be valid relative to the project.
 
 Troubleshooting
 ----------------------
-
 Problem: App doesn’t open
 Solution: Ensure Java 17+ is installed and JavaFX is configured.
 
@@ -81,7 +84,8 @@ Solution: Check for empty fields or duplicate ID.
 Problem: Image doesn’t show
 Solution: Check if the image exists in 'out/images/' and has a valid path.
 
-
+Problem: JSON file error
+Solution: Validate your imported JSON using an online validator
 
 Developed for CE 216 Course
 
