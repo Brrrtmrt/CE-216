@@ -106,9 +106,19 @@ public class ControllerUnique implements Initializable {
             ArrayList<String> tags = new ArrayList<>(Arrays.asList(attr.get(12).split(": ")[1].split(", ")));
             id = attr.get(13).split(": ")[1];
             String imagePath = attr.get(14).split(": ")[1];
+            if (imagePath != null && !imagePath.isBlank()) {
+                imagePath = imagePath.trim().replace("\\", "/");
+                Path sourcePath = Paths.get(imagePath.trim());
+                Path targetDirectory = Paths.get(System.getProperty("user.dir"), "out", "images");
+                if (!Files.exists(targetDirectory)) {
+                    Files.createDirectories(targetDirectory);
+                }
+                Path targetPath = targetDirectory.resolve(sourcePath.getFileName());
+                Files.copy(sourcePath, targetPath);
+                imagePath = targetPath.toString();
+            }
             Dimension dimension = new Dimension(length, width, height);
             artifact = new Artifact(id, name, category, discoveryLocation, composition, civilization, discoveryDate, currentPlace, dimension, weight, tags, imagePath);
-            System.out.println("Artifact created in save(): " + artifact.getID());
         } catch (Exception e) {
             System.out.println("bad text");
             return false;

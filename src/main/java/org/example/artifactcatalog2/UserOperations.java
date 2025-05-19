@@ -40,7 +40,7 @@ public class UserOperations {
                     try {
                         boolean deleted = Files.deleteIfExists(imagePath);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        return false;
                     }
                 }
                 iterator.remove();
@@ -66,12 +66,5 @@ public class UserOperations {
         }
         return allDeleted;
     }
-    
 
-    public static void main(String[] args) {
-       /* ArrayList<Artifact> list = JSONOperations.readExistingList();
-        deleteArtifact("ID0");
-        ArrayList<Artifact> list2 = JSONOperations.readExistingList();
-        System.out.println(list2.getFirst().getID());*/
-    }
 }

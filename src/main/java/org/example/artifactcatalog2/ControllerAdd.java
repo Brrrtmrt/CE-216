@@ -52,7 +52,6 @@ public class ControllerAdd {
                 selectedImagePath = "out/images/" + selectedFile.getName();
                 labelImagePath.setText(selectedFile.getName());
             } catch (IOException e) {
-                e.printStackTrace();
                 showAlert("Image selection failed: " + e.getMessage());
             }
         }
@@ -89,7 +88,6 @@ public class ControllerAdd {
             }            
         } catch (Exception e) {
             showAlert("Error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

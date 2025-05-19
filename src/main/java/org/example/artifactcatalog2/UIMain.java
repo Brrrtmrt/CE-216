@@ -13,8 +13,6 @@ public class UIMain extends Application {
     public void start(Stage mainStage) throws Exception{
         FXMLLoader loaderMain = new FXMLLoader(getClass().getResource("mainf.fxml"));
         Parent root = loaderMain.load();
-        //Image appIcon = new Image(getClass().getResourceAsStream("/images/ms.jpg"));
-        //mainStage.getIcons().add(appIcon);
 
         Scene sceneMain = new Scene(root);  //kind of a main page
 
